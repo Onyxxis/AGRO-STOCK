@@ -262,7 +262,73 @@
                 }
             }
 
-            #loading-screen {
+
+        /* Conteneur des cartes */
+.stats-container {
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+    margin-top: 30px;
+}
+
+/* Style de base des cartes */
+.stat-card {
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    flex: 1;
+    text-align: center;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* Effet au survol */
+.stat-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+}
+
+/* Icône */
+.stat-icon {
+    font-size: 2.5em;
+    color: #fff;
+    background-color: #2c3e50;
+    width: 60px;
+    height: 60px;
+    line-height: 60px;
+    border-radius: 50%;
+    margin: 0 auto 15px;
+}
+
+/* Titre de la carte */
+.stat-info h3 {
+    font-size: 1.2em;
+    color: #333;
+    margin-bottom: 10px;
+}
+
+/* Valeur de la carte */
+.stat-value {
+    font-size: 1.5em;
+    font-weight: bold;
+    color: #2c3e50;
+}
+
+/* Couleurs personnalisées pour chaque carte */
+#produits-card .stat-icon {
+    background-color: #3498db; /* Bleu */
+}
+
+#commandes-card .stat-icon {
+    background-color: #e67e22; /* Orange */
+}
+
+#ca-card .stat-icon {
+    background-color: #27ae60; /* Vert */
+}
+
+
+#loading-screen {
                 position: fixed;
                 top: 0;
                 left: 0;
@@ -283,16 +349,16 @@
             #main-content {
                 display: none;
             }
-
         </style>
     </head>
     <body>
 
-    <div id="loading-screen">
+        <div id="loading-screen">
             <video id="loading-video" autoplay loop muted>
                 <source src="{{ asset('loading.mp4') }}" type="video/mp4" />
             </video>
         </div>
+
 
         <nav class="top-navbar">
             <div class="search-bar">
@@ -346,7 +412,7 @@
             </div>
             <ul>
                 <li>
-                    <a href="/dashboard">
+                    <a href="">
                         <i class="fas fa-home"></i>
                         <span>Accueil</span>
                     </a>
@@ -358,7 +424,7 @@
                     </a>
                 </li>
                 <li>
-                    <a href="">
+                    <a href="/stockage">
                         <i class="fas fa-warehouse"></i>
                         <span>Stock</span>
                     </a>
@@ -370,7 +436,7 @@
                     </a>
                 </li>
                 <li>
-                    <a href="">
+                    <a href="/statistique">
                         <i class="fas fa-chart-bar"></i>
                         <span>Rapports</span>
                     </a>
@@ -382,8 +448,10 @@
         </div>
 
         <div class="content" id="content">
-
-</div>
+    <div class="welcome-section">
+        <h2>Page de stock</h2>
+        <p>Gérez efficacement votre stock de produits agricoles</p>
+    </div>
 
 </div>
 

@@ -3,7 +3,7 @@
     <head>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>Dashboard - Stock</title>
+        <title>Dashboard</title>
         <link
             rel="stylesheet"
             href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
@@ -14,7 +14,7 @@
         />
         <style>
             :root {
-                --primary-color: #5BCC90FF;
+                --primary-color: #38a169;
                 --secondary-color: #276749;
                 --light-bg: #f7fafc;
                 --sidebar-width: 280px;
@@ -32,13 +32,13 @@
             }
 
             a {
-                text-decoration: none;
-                color: inherit;
+                text-decoration: none; /* Enlève le soulignement */
+                color: inherit; /* Hérite la couleur du texte parent */
             }
 
             a:hover,
             a:focus {
-                color: inherit;
+                color: inherit; /* Empêche le changement de couleur en bleu */
             }
 
             .top-navbar {
@@ -166,7 +166,7 @@
 
             .search-bar {
                 position: relative;
-                max-width: 400px;
+                max-width: 300px;
             }
 
             .search-bar i {
@@ -174,7 +174,7 @@
                 left: 12px;
                 top: 50%;
                 transform: translateY(-50%);
-                color: #A6D8C1FF;
+                color: #718096;
             }
 
             .search-bar input {
@@ -243,123 +243,6 @@
                 margin-bottom: 0;
             }
 
-            /* Styles pour le tableau des produits */
-            .filter-section {
-                display: flex;
-                align-items: center;
-                gap: 1rem;
-                margin-bottom: 2rem;
-            }
-
-            .filter-group {
-                display: flex;
-                align-items: center;
-                gap: 0.5rem;
-            }
-
-            .filter-group label {
-                font-weight: 500;
-                color: #2d3748;
-                white-space: nowrap;
-            }
-
-            .filter-group select {
-                padding: 0.5rem;
-                border: 1px solid #e2e8f0;
-                border-radius: 8px;
-                background-color: #f7fafc;
-                font-size: 1rem;
-                color: #2d3748;
-                transition: border-color 0.3s ease;
-            }
-
-            .filter-group select:focus {
-                border-color: var(--primary-color);
-                outline: none;
-            }
-
-            #sort-button {
-                background-color: var(--primary-color);
-                border: none;
-                padding: 0.5rem 1rem;
-                border-radius: 8px;
-                color: white;
-                font-weight: 500;
-                cursor: pointer;
-                transition: background-color 0.3s ease;
-                white-space: nowrap;
-            }
-
-            #sort-button:hover {
-                background-color: var(--secondary-color);
-            }
-
-            .product-table {
-                width: 100%;
-                border-collapse: collapse;
-                background-color: white;
-                border-radius: 12px;
-                box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-            }
-
-            .product-table th,
-            .product-table td {
-                padding: 1rem;
-                text-align: left;
-                border-bottom: 1px solid #e2e8f0;
-
-            }
-
-            .product-table th {
-                background-color: var(--primary-color);
-                color: white;
-                font-weight: 600;
-            }
-
-            .product-table tbody tr:hover {
-                background-color: #e2f3e8;
-                transform: scale(1.02);
-                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-                transition: background-color 0.3s ease, transform 0.2s ease;
-            }
-
-            .product-table tbody tr:last-child td {
-                border-bottom: none;
-            }
-
-            .product-table tbody tr:nth-child(even) {
-                background-color: #f9f9f9;
-            }
-
-            .product-table td {
-                margin-right: 8px;
-                /* color: var(--primary-color); */
-                color: black; /* Texte en noir */
-
-            }
-            .i{
-                color: var(--color-green-50)
-            }
-
-            .action-buttons {
-                display: flex;
-                gap: 8px;
-            }
-
-            .action-buttons button {
-                padding: 0.5rem;
-                border: none;
-                border-radius: 8px;
-                background-color: var(--primary-color);
-                color: white;
-                cursor: pointer;
-                transition: background-color 0.3s ease;
-            }
-
-            .action-buttons button:hover {
-                background-color: var(--secondary-color);
-            }
-
             @media (max-width: 768px) {
                 .sidebar {
                     width: var(--sidebar-collapsed-width);
@@ -379,7 +262,73 @@
                 }
             }
 
-            #loading-screen {
+
+        /* Conteneur des cartes */
+.stats-container {
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+    margin-top: 30px;
+}
+
+/* Style de base des cartes */
+.stat-card {
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    flex: 1;
+    text-align: center;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* Effet au survol */
+.stat-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+}
+
+/* Icône */
+.stat-icon {
+    font-size: 2.5em;
+    color: #fff;
+    background-color: #2c3e50;
+    width: 60px;
+    height: 60px;
+    line-height: 60px;
+    border-radius: 50%;
+    margin: 0 auto 15px;
+}
+
+/* Titre de la carte */
+.stat-info h3 {
+    font-size: 1.2em;
+    color: #333;
+    margin-bottom: 10px;
+}
+
+/* Valeur de la carte */
+.stat-value {
+    font-size: 1.5em;
+    font-weight: bold;
+    color: #2c3e50;
+}
+
+/* Couleurs personnalisées pour chaque carte */
+#produits-card .stat-icon {
+    background-color: #3498db; /* Bleu */
+}
+
+#commandes-card .stat-icon {
+    background-color: #e67e22; /* Orange */
+}
+
+#ca-card .stat-icon {
+    background-color: #27ae60; /* Vert */
+}
+
+
+#loading-screen {
                 position: fixed;
                 top: 0;
                 left: 0;
@@ -404,11 +353,13 @@
     </head>
     <body>
 
-    <div id="loading-screen">
+        <div id="loading-screen">
             <video id="loading-video" autoplay loop muted>
                 <source src="{{ asset('loading.mp4') }}" type="video/mp4" />
             </video>
         </div>
+
+
         <nav class="top-navbar">
             <div class="search-bar">
                 <i class="fas fa-search"></i>
@@ -457,12 +408,11 @@
                 <h4>
                     <i class="fas fa-leaf"></i>
                     <span>Agro Stock</span>
-                </h4>
-                <hr />
+                </h4><hr>
             </div>
             <ul>
                 <li>
-                    <a href="/dashboard">
+                    <a href="">
                         <i class="fas fa-home"></i>
                         <span>Accueil</span>
                     </a>
@@ -498,41 +448,13 @@
         </div>
 
         <div class="content" id="content">
-            <div class="welcome-section">
-                <h2>Produits disponibles</h2>
-                <div class="filter-section">
-                    <div class="filter-group">
-                        <label for="sort-by">Trier par :</label>
-                        <select id="sort-by" class="form-control">
-                            <option value="type">Selectionner</option>
-                            <option value="type">Type</option>
-                            <option value="status">Statut</option>
-                        </select>
-                    </div>
-                    <button id="sort-button" class="btn btn-primary">
-                        <i class="fas fa-sort"></i> Trier
-                    </button>
-                </div>
-            </div>
+    <div class="welcome-section">
+        <h2>Page de statistique</h2>
+        <p>Voir vos statistique</p>
+    </div>
 
-            <div class="table-responsive">
-                <table class="product-table">
-                    <thead>
-                        <tr>
-                            <th>Nom du produit</th>
-                            <th>Type</th>
-                            <th>Quantité (kg)</th>
-                            <th>Date de récolte</th>
-                            <th>Statut</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody id="product-table-body">
-                        <!-- Les lignes des produits seront ajoutées ici dynamiquement -->
-                    </tbody>
-                </table>
-            </div>
-        </div>
+</div>
+
 
         <script>
             const sidebar = document.getElementById("sidebar");
@@ -542,104 +464,6 @@
             collapseToggle.addEventListener("click", () => {
                 sidebar.classList.toggle("collapsed");
                 content.classList.toggle("collapsed");
-            });
-
-            // Données de test
-            const products = [
-                {
-                    name: "Tomates",
-                    type: "Légumes",
-                    quantity: 150.5,
-                    harvestDate: "2023-10-01",
-                    status: "Stocké",
-                },
-                {
-                    name: "Bananes",
-                    type: "Fruits",
-                    quantity: 200.0,
-                    harvestDate: "2023-09-25",
-                    status: "Vendu",
-                },
-                {
-                    name: "Riz",
-                    type: "Céréales",
-                    quantity: 500.0,
-                    harvestDate: "2023-10-05",
-                    status: "Distribué",
-                },
-                {
-                    name: "Pommes",
-                    type: "Fruits",
-                    quantity: 300.0,
-                    harvestDate: "2023-09-30",
-                    status: "Stocké",
-                },
-            ];
-
-            function renderProducts(products) {
-                const tbody = document.getElementById("product-table-body");
-                tbody.innerHTML = "";
-
-                products.forEach((product) => {
-                    const row = document.createElement("tr");
-                    row.innerHTML = `
-                        <td><i class=""></i>${product.name}</td>
-                        <td><i class=""></i>${product.type}</td>
-                        <td>${product.quantity}</td>
-                        <td>${product.harvestDate}</td>
-                        <td>${product.status}</td>
-                        <td>
-                            <div class="action-buttons">
-                                <button onclick="increaseQuantity('${product.name}')">
-                                    <i class="fas fa-plus caret-violet-50"></i>
-                                </button>
-                                <button onclick="decreaseQuantity('${product.name}')">
-                                    <i class="fas fa-minus"></i>
-                                </button>
-                            </div>
-                        </td>
-                    `;
-                    tbody.appendChild(row);
-                });
-            }
-
-            // Trier les produits
-            function sortProducts(by) {
-                const sortedProducts = [...products].sort((a, b) => {
-                    if (a[by] < b[by]) return -1;
-                    if (a[by] > b[by]) return 1;
-                    return 0;
-                });
-                renderProducts(sortedProducts);
-            }
-
-            // Augmenter la quantité
-            function increaseQuantity(productName) {
-                const product = products.find((p) => p.name === productName);
-                if (product) {
-                    product.quantity += 10;
-                    renderProducts(products);
-                }
-            }
-
-            // Diminuer la quantité
-            function decreaseQuantity(productName) {
-                const product = products.find((p) => p.name === productName);
-                if (product && product.quantity >= 10) {
-                    product.quantity -= 10;
-                    renderProducts(products);
-                }
-            }
-
-            // Gérer le clic sur le bouton de tri
-            document.getElementById("sort-button").addEventListener("click", () => {
-                const sortBy = document.getElementById("sort-by").value;
-                sortProducts(sortBy);
-            });
-
-            // Afficher les produits au chargement de la page
-            document.addEventListener("DOMContentLoaded", () => {
-                renderProducts(products);
             });
         </script>
 
