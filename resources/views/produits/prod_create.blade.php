@@ -349,6 +349,70 @@
                 display: none;
             }
 
+            /* Style du Modal */
+.success-modal {
+    display: none;
+    position: fixed;
+    z-index: 1050;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+.modal-content {
+    background-color: white;
+    margin: 15% auto;
+    padding: 30px;
+    border-radius: 12px;
+    width: 400px;
+    max-width: 90%;
+    text-align: center;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    animation: modalFadeIn 0.3s;
+}
+
+@keyframes modalFadeIn {
+    from {opacity: 0; transform: translateY(-20px);}
+    to {opacity: 1; transform: translateY(0);}
+}
+
+.success-icon {
+    font-size: 60px;
+    color: #38a169;
+    margin-bottom: 20px;
+}
+
+.modal-title {
+    font-size: 24px;
+    font-weight: 600;
+    margin-bottom: 15px;
+    color: #2d3748;
+}
+
+.modal-message {
+    font-size: 16px;
+    color: #4a5568;
+    margin-bottom: 25px;
+}
+
+.modal-close-btn {
+    background-color: #38a169;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.modal-close-btn:hover {
+    background-color: #2f855a;
+}
+
+
         </style>
     </head>
     <body>
@@ -447,77 +511,126 @@
         <div class="content" id="content">
 
     <!-- Formulaire d'ajout de produit -->
-    <div class="form-container">
-    <h2 class="text-bold ">Ajouter un produit</h2>
 
-        <form id="add-product-form">
-            <!-- Nom du produit -->
-            <div class="form-group">
-                <label for="product-name">Nom du produit</label>
-                <input
-                    type="text"
-                    id="product-name"
-                    name="product-name"
-                    placeholder="nom du produit"
-                    required
-                />
-            </div>
+<!-- <div class="container">
+    <h2>{{ isset($produit) ? 'Modifier' : 'Ajouter' }} un produit</h2>
 
-            <!-- Type de produit -->
-            <div class="form-group">
-                <label for="product-type">Type de produit</label>
-                <select id="product-type" name="product-type" required>
-                    <option value="" disabled selected>Sélectionnez un type</option>
-                    <option value="Fruits">Fruits</option>
-                    <option value="Légumes">Légumes</option>
-                    <option value="Céréales">Céréales</option>
-                    <option value="Autre">Autre</option>
-                </select>
-            </div>
+    @if ($errors->any())
+        <div class="alert alert-danger">
+            <ul>
+                @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+    @endif
 
-            <!-- Quantité récoltée -->
-            <div class="form-group">
-                <label for="quantity">Quantité récoltée (en kg)</label>
-                <input
-                    type="number"
-                    id="quantity"
-                    name="quantity"
-                    step="0.01"
-                    placeholder="Ex: 150.5"
-                    required
-                />
-            </div>
+    <form action="{{ isset($produit) ? route('produits.update', $produit->id) : route('produits.store') }}" method="POST">
+        @csrf
+        @if(isset($produit))
+            @method('PUT')
+        @endif
 
-            <!-- Date de récolte -->
-            <div class="form-group">
-                <label for="harvest-date">Date de récolte</label>
-                <input
-                    type="date"
-                    id="harvest-date"
-                    name="harvest-date"
-                    required
-                />
-            </div>
+        <div class="mb-3">
+            <label for="nom" class="form-label">Nom du produit :</label>
+            <input type="text" class="form-control" name="nom" value="{{ old('nom', $produit->nom ?? '') }}" required>
+        </div>
 
-            <!-- Statut du produit -->
-            <div class="form-group">
-                <label for="status">Statut</label>
-                <select id="status" name="status" required>
-                    <option value="" disabled selected>Sélectionnez un statut</option>
-                    <option value="Stocké">Stocké</option>
-                    <option value="Vendu">Vendu</option>
-                    <option value="Distribué">Distribué</option>
-                </select>
-            </div>
+        <div class="mb-3">
+            <label for="type" class="form-label">Type :</label>
+            <input type="text" class="form-control" name="type" value="{{ old('type', $produit->type ?? '') }}" required>
+        </div>
 
-            <!-- Bouton de soumission -->
-            <div class="form-group">
-                <button type="submit" class="submit-btn">
-                    <i class="fas fa-plus-circle"></i> Ajouter le produit
-                </button>
-            </div>
-        </form>
-    </div>
+        <div class="mb-3">
+            <label for="quantite_recoltee" class="form-label">Quantité :</label>
+            <input type="number" class="form-control" name="quantite_recoltee" value="{{ old('quantite_recoltee', $produit->quantite_recoltee ?? '') }}" required>
+        </div>
+
+        <div class="mb-3">
+            <label for="date_recolte" class="form-label">Date de récolte :</label>
+            <input type="date" class="form-control" name="date_recolte" value="{{ old('date_recolte', $produit->date_recolte ?? '') }}" required>
+        </div>
+
+        <div class="mb-3">
+            <label for="statut" class="form-label">Statut :</label>
+            <select class="form-control" name="statut" required>
+                <option value="Stocké" {{ (isset($produit) && $produit->statut == 'Stocké') ? 'selected' : '' }}>Stocké</option>
+                <option value="Vendu" {{ (isset($produit) && $produit->statut == 'Vendu') ? 'selected' : '' }}>Vendu</option>
+                <option value="Distribué" {{ (isset($produit) && $produit->statut == 'Distribué') ? 'selected' : '' }}>Distribué</option>
+            </select>
+        </div>
+
+        <button type="submit" class="btn btn-primary">
+            {{ isset($produit) ? 'Modifier' : 'Ajouter' }}
+        </button>
+    </form>
+</div> -->
+
+<div class="container">
+    <h2>{{ isset($produit) ? 'Modifier' : 'Ajouter' }} un produit</h2>
+
+    @if ($errors->any())
+        <div class="alert alert-danger">
+            <ul>
+                @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+    @endif
+
+    <form action="{{ isset($produit) ? route('produits.update', $produit->id) : route('produits.store') }}" method="POST">
+        @csrf
+        @if(isset($produit))
+            @method('PUT')
+        @endif
+
+        <div class="mb-3">
+            <label for="nom" class="form-label">Nom du produit :</label>
+            <input type="text" class="form-control" name="nom" value="{{ old('nom', $produit->nom ?? '') }}" required>
+        </div>
+
+        <div class="mb-3">
+            <label for="type" class="form-label">Type :</label>
+            <select class="form-control" name="type" id="type" required>
+                <option value="">Sélectionner un type</option>
+                <option value="fruits" {{ old("type", $produit->type ?? '') === 'fruits' ? 'selected' : '' }}>Fruits</option>
+                <option value="legume" {{ old("type", $produit->type ?? '') === 'legume' ? 'selected' : '' }}>Légume</option>
+                <option value="cereale" {{ old("type", $produit->type ?? '') === 'cereale' ? 'selected' : '' }}>Céréale</option>
+                <option value="tubercule" {{ old("type", $produit->type ?? '') === 'tubercule' ? 'selected' : '' }}>Tubercule</option>
+                <option value="autre" {{ old("type", $produit->type ?? '') === 'autre' ? 'selected' : '' }}>Autre</option>
+            </select>
+        </div>
+
+
+        <div class="mb-3">
+            <label for="quantite_recoltee" class="form-label">Quantité :</label>
+            <input type="number" class="form-control" name="quantite_recoltee" value="{{ old('quantite_recoltee', $produit->quantite_recoltee ?? '') }}" required>
+        </div>
+
+        <div class="mb-3">
+            <label for="date_recolte" class="form-label">Date de récolte :</label>
+            <input type="date" class="form-control" name="date_recolte" value="{{ old('date_recolte', $produit->date_recolte ?? '') }}" required>
+        </div>
+
+        <div class="mb-3">
+            <label for="statut" class="form-label">Statut :</label>
+            <select class="form-control" name="statut" required>
+                <option value="Stocké" {{ (isset($produit) && $produit->statut == 'Stocké') ? 'selected' : '' }}>Stocké</option>
+                <option value="Vendu" {{ (isset($produit) && $produit->statut == 'Vendu') ? 'selected' : '' }}>Vendu</option>
+                <option value="Distribué" {{ (isset($produit) && $produit->statut == 'Distribué') ? 'selected' : '' }}>Distribué</option>
+            </select>
+        </div>
+
+        <button type="submit" class="btn w-100" style="color: white; background-color: var(--primary-color);">
+            {{ isset($produit) ? 'Modifier' : 'Ajouter' }}
+        </button>
+
+    </form>
+</div>
+
+
+
 </div>
 
 </div>
@@ -543,6 +656,28 @@
                     loadingScreen.style.display = "none";
                     mainContent.style.display = "block";
                 }, 2000);
+            });
+
+            function showSuccessModal() {
+                const modal = document.getElementById('successModal');
+                if (modal) {
+                    modal.style.display = 'block';
+                }
+            }
+
+            function closeSuccessModal() {
+                const modal = document.getElementById('successModal');
+                if (modal) {
+                    modal.style.display = 'none';
+                }
+            }
+
+            // Fermer le modal si on clique en dehors
+            window.addEventListener('click', function(event) {
+                const modal = document.getElementById('successModal');
+                if (event.target === modal) {
+                    closeSuccessModal();
+                }
             });
         </script>
 

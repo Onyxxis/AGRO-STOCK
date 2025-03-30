@@ -460,9 +460,10 @@
             </div>
             <div class="stat-info">
                 <h3>Produits</h3>
-                <p class="stat-value">15</p>
+                <p class="stat-value">{{ $produitCount }}</p>
             </div>
         </div>
+
 
         <!-- Carte 2 : Nombre de commandes -->
         <div class="stat-card" id="commandes-card">
