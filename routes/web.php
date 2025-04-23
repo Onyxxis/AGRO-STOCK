@@ -2,6 +2,7 @@
 use App\Http\Controllers\ProduitController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\StatistiqueController;
+use App\Http\Controllers\TransactionController;
 use App\Models\Produit;
 use Illuminate\Http\Request;
 
@@ -47,6 +48,12 @@ Route::get('/statistique', function () {
     return view('statistique.stat');
 });
 
-Route::get('/transaction', function () {
-    return view('transaction.commande');
-});
+//Route::get('/transaction', function () {
+   // return view('transaction.commande');
+//});
+
+
+    Route::resource('transaction', TransactionController::class)->except(['show']);
+    Route::get('/transaction/filter', [TransactionController::class, 'filter'])->name('transaction.filter');
+    Route::get('/transaction/search', [TransactionController::class, 'search'])->name('transaction.search');
+    //Route::get('/transaction/{transaction}/edit', [TransactionController::class, 'edit'])->name('transaction.edit');  
