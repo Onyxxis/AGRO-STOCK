@@ -41,7 +41,6 @@ class TransactionController extends Controller
     
             // Chercher le stock pour ce produit
             $stock = Stock::where('produit_id', $request->produit_id)->first();
-            $produit = Produit::find($request->produit_id);
             
             \Log::info('3. Stock récupéré: ' . ($stock ? 'Oui' : 'Non'));
     
@@ -52,7 +51,7 @@ class TransactionController extends Controller
             }
     
             // Vérifier que le stock est suffisant
-            if ($stock->quantite_en_stock < $request->quantite) {
+            if ($stock->quantite_stockee < $request->quantite) {
                 \Log::info('5. Stock insuffisant');
                 return back()->withErrors(['quantite' => 'Stock insuffisant pour cette transaction.']);
             }
@@ -72,18 +71,12 @@ class TransactionController extends Controller
             \Log::info('7. Transaction créée avec succès');
     
             // Mettre à jour le stock
-            $stock->quantite_en_stock -= $request->quantite;
+            $stock->quantite_stockee -= $request->quantite;
             $stock->save();
     
-            // Mettre à jour la quantité récoltée du produit
-            if ($produit) {
-                $produit->quantite_recoltee -= $request->quantite;
-                $produit->save();
-                \Log::info('8. Quantité récoltée du produit mise à jour');
-            }
+            \Log::info('8. Stock mis à jour');
     
-            \Log::info('9. Stock mis à jour');
-            \Log::info('10. Tentative de redirection');
+            \Log::info('9. Tentative de redirection');
     
             return redirect()->route('transaction.index')->with('success', 'Transaction enregistrée avec succès.');
         } catch (\Exception $e) {
@@ -92,7 +85,6 @@ class TransactionController extends Controller
             return back()->withErrors(['error' => 'Une erreur est survenue: ' . $e->getMessage()]);
         }
     }
-    
 
     public function edit(Transaction $transaction)
     {
@@ -101,67 +93,49 @@ class TransactionController extends Controller
     }
 
     public function update(Request $request, Transaction $transaction)
-{
-    $request->validate([
-        'produit_id' => 'required|exists:produits,id',
-        'type_transaction' => 'required|in:Vente,Distribution',
-        'date_transaction' => 'required|date',
-        'quantite' => 'required|numeric|min:0.01',
-        'prix_unitaire' => 'nullable|required_if:type_transaction,Vente|numeric|min:0',
-        'destinataire' => 'required|string|max:255',
-    ]);
+    {
+        $request->validate([
+            'produit_id' => 'required|exists:produits,id',
+            'type_transaction' => 'required|in:Vente,Distribution',
+            'date_transaction' => 'required|date',
+            'quantite' => 'required|numeric|min:0.01',
+            'prix_unitaire' => 'nullable|required_if:type_transaction,Vente|numeric|min:0',
+            'destinataire' => 'required|string|max:255',
+        ]);
 
-    $ancienne_quantite = $transaction->quantite;
-    $stock = Stock::where('produit_id', $transaction->produit_id)->first();
-    $produit = Produit::find($transaction->produit_id);
+        $ancienne_quantite = $transaction->quantite;
+        $stock = Stock::where('produit_id', $transaction->produit_id)->first();
 
-    // Remettre l'ancienne quantité avant d'appliquer la nouvelle
-    $stock->quantite_en_stock += $ancienne_quantite;
-    
-    // Remettre aussi l'ancienne quantité dans la quantité récoltée
-    if ($produit) {
-        $produit->quantite_recoltee += $ancienne_quantite;
-    }
+        // Remettre l'ancienne quantité avant d'appliquer la nouvelle
+        $stock->quantite_stockee += $ancienne_quantite;
+        
+        // Vérifier que le stock est suffisant après la remise de l'ancienne quantité
+        if ($stock->quantite_stockee < $request->quantite) {
+            return back()->withErrors(['quantite' => 'Stock insuffisant pour cette modification.']);
+        }
 
-    if ($stock->quantite_en_stock < $request->quantite) {
-        return back()->withErrors(['quantite' => 'Stock insuffisant pour cette modification.']);
-    }
+        $transaction->update($request->all());
 
-    $transaction->update($request->all());
-
-    // Appliquer la nouvelle quantité
-    $stock->quantite_en_stock -= $request->quantite;
-    $stock->save();
-    
-    // Mettre à jour la quantité récoltée avec la nouvelle quantité
-    if ($produit) {
-        $produit->quantite_recoltee -= $request->quantite;
-        $produit->save();
-    }
-
-    return redirect()->route('transaction.index')->with('success', 'Transaction modifiée avec succès.');
-}
-
-public function destroy(Transaction $transaction)
-{
-    $stock = Stock::where('produit_id', $transaction->produit_id)->first();
-    $produit = Produit::find($transaction->produit_id);
-
-    if ($stock) {
-        $stock->quantite_en_stock += $transaction->quantite;
+        // Appliquer la nouvelle quantité
+        $stock->quantite_stockee -= $request->quantite;
         $stock->save();
-    }
-    
-    // Remettre la quantité dans la quantité récoltée lorsqu'on supprime une transaction
-    if ($produit) {
-        $produit->quantite_recoltee += $transaction->quantite;
-        $produit->save();
+
+        return redirect()->route('transaction.index')->with('success', 'Transaction modifiée avec succès.');
     }
 
-    $transaction->delete();
+    public function destroy(Transaction $transaction)
+    {
+        $stock = Stock::where('produit_id', $transaction->produit_id)->first();
 
-    return redirect()->route('transaction.index')->with('success', 'Transaction supprimée avec succès.');
-}
+        if ($stock) {
+            $stock->quantite_stockee += $transaction->quantite;
+            $stock->save();
+        }
+
+        $transaction->delete();
+
+        return redirect()->route('transaction.index')->with('success', 'Transaction supprimée avec succès.');
+    }
 
     public function filter(Request $request)
     {
