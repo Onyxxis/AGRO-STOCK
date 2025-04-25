@@ -16,4 +16,14 @@ class Produit extends Model
         'date_recolte',
         'statut',
     ];
+    public function transactions()
+{
+    return $this->hasMany(Transaction::class);
+}
+
+public function stock()
+{
+    return $this->hasOne(Stock::class);
+}
+
 }

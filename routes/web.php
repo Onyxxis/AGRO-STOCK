@@ -2,13 +2,12 @@
 use App\Http\Controllers\ProduitController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\StatistiqueController;
+use App\Http\Controllers\TransactionController;
 use App\Models\Produit;
 use Illuminate\Http\Request;
 
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
-
-
 
 Route::get('/', function () {
     return view('auth.login');
@@ -22,17 +21,12 @@ Route::get('/signup', function () {
     return view('auth.signup');
 });
 
-
-
-
 Route::get('/dashboard', function () {
     return view('dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
-
-
-
 Route::middleware('auth')->group(function () {
+    // Profil
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
@@ -52,14 +46,15 @@ Route::middleware('auth')->group(function () {
     });
 
 
+    // Transactions
+    Route::resource('transaction', TransactionController::class)->except(['show']);
+    Route::get('/transaction/filter', [TransactionController::class, 'filter'])->name('transaction.filter');
+    Route::get('/transaction/search', [TransactionController::class, 'search'])->name('transaction.search');
+
+    // Statistiques
     Route::get('/statistique', function () {
         return view('statistique.stat');
     });
-
-    Route::get('/transaction', function () {
-        return view('transaction.commande');
-    });
-
 });
 
 require __DIR__.'/auth.php';
