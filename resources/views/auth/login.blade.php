@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Connexion - Agro</title>
     <style>
-        body {
+         body {
             margin: 0;
             padding: 0;
             display: flex;
@@ -149,15 +149,14 @@
             #main-content {
                 display: none;
             }
-
     </style>
 </head>
 <body>
-<div id="loading-screen">
-            <video id="loading-video" autoplay loop muted>
-                <source src="{{ asset('loading.mp4') }}" type="video/mp4" />
-            </video>
-        </div>
+    <div id="loading-screen">
+        <video id="loading-video" autoplay loop muted>
+            <source src="{{ asset('loading.mp4') }}" type="video/mp4" />
+        </video>
+    </div>
     <div class="left-side"></div>
     <div class="right-side">
         <div class="login-form">
@@ -166,23 +165,48 @@
                 <span class="logo-text">Agro Stock</span>
             </div>
             <h1>CONNEXION</h1><br>
-            <form action="#" method="POST">
+
+            <!-- 🔐 Formulaire Laravel Breeze avec Blade -->
+            <form method="POST" action="{{ route('login') }}">
+                @csrf
+
+                <!-- Email Address -->
                 <div class="form-group">
-                    <label for="username">Nom d'utilisateur</label>
-                    <input type="text" id="username" name="username" required>
+                    <label for="email">Email</label>
+                    <input id="email" type="email" name="email" :value="old('email')" required autofocus>
+                    @error('email')
+                        <span class="text-red-500 text-sm">{{ $message }}</span>
+                    @enderror
                 </div>
+
+                <!-- Password -->
                 <div class="form-group">
                     <label for="password">Mot de passe</label>
-                    <div style="position: relative;">
-                        <input type="password" id="password" name="password" required>
+                    <input id="password" type="password" name="password" required>
+                    @error('password')
+                        <span class="text-red-500 text-sm">{{ $message }}</span>
+                    @enderror
+                </div>
+
+                <!-- Remember Me -->
+                <div class="form-group">
+                    <label>
+                        <input type="checkbox" name="remember">
+                        <span>Se souvenir de moi</span>
+                    </label>
+                </div>
+
+                <button type="submit" class="btn-login">Se connecter</button>
+
+                @if (Route::has('password.request'))
+                    <div class="signup-link mt-4">
+                        <a href="{{ route('password.request') }}">Mot de passe oublié ?</a>
                     </div>
-                </div>
-                <button type="submit" class="btn-login">Se connecter
-                </button>
-                <div class="signup-link">
-                    <p>Vous n'avez pas de compte ? <a href="/signup">Créer un compte!</a></p>
-                </div>
-            </form><hr>
+                @endif
+            </form>
+
+            <hr>
+
             <div class="social-login">
                 <button type="button">Se connecter avec Google</button>
                 <button type="button">Autre méthode</button>
@@ -191,18 +215,15 @@
     </div>
 
     <script>
+        window.addEventListener("load", function () {
+            const loadingScreen = document.getElementById("loading-screen");
+            const mainContent = document.getElementById("main-content");
 
+            setTimeout(() => {
+                loadingScreen.style.display = "none";
+                if (mainContent) mainContent.style.display = "block";
+            }, 2000);
+        });
     </script>
-    <script>
-            window.addEventListener("load", function () {
-                const loadingScreen = document.getElementById("loading-screen");
-                const mainContent = document.getElementById("main-content");
-
-                setTimeout(() => {
-                    loadingScreen.style.display = "none";
-                    mainContent.style.display = "block";
-                }, 2000);
-            });
-        </script>
 </body>
 </html>
