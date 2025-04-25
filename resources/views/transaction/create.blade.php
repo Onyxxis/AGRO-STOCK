@@ -438,7 +438,7 @@
             
             .error-list li {
                 margin-bottom: 5px;
-                padding: 5px;
+                padding: 5px 10px;
                 background-color: #fed7d7;
                 border-radius: 4px;
             }
@@ -471,6 +471,23 @@
 
             .modal-error-btn:hover {
                 background-color: #c53030;
+            }
+            
+            /* Ajout des styles pour les messages d'erreur en ligne */
+            .invalid-feedback {
+                display: block;
+                width: 100%;
+                margin-top: 0.25rem;
+                font-size: 0.875em;
+                color: #e53e3e;
+            }
+            
+            .is-invalid {
+                border-color: #e53e3e !important;
+                background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12' width='12' height='12' fill='none' stroke='%23e53e3e'%3e%3ccircle cx='6' cy='6' r='4.5'/%3e%3cpath stroke-linejoin='round' d='M5.8 3.6h.4L6 6.5z'/%3e%3ccircle cx='6' cy='8.2' r='.6' fill='%23e53e3e' stroke='none'/%3e%3c/svg%3e");
+                background-repeat: no-repeat;
+                background-position: right calc(0.375em + 0.1875rem) center;
+                background-size: calc(0.75em + 0.375rem) calc(0.75em + 0.375rem);
             }
         </style>
     </head>
@@ -570,47 +587,88 @@
             <div class="container">
                 <h2>Ajouter une Transaction</h2>
                 
-                <!-- Nous n'afficherons plus les erreurs ici, elles seront dans le modal -->
+                <!-- Affichage des erreurs dans une alerte -->
+                @if ($errors->any())
+                <div class="alert alert-danger mb-4">
+                    <i class="fas fa-exclamation-triangle me-2"></i>
+                    <strong>Attention !</strong> Veuillez corriger les erreurs ci-dessous.
+                </div>
+                @endif
                 
-                <form action="{{ route('transaction.store') }}" method="POST" id="transactionForm">
+                <form action="{{ route('transaction.store') }}" method="POST" id="transactionForm" class="bg-white p-4 rounded shadow">
                     @csrf
                     
                     <div class="mb-3">
                         <label for="produit_id_field" class="form-label">Produit</label>
-                        <select id="produit_id_field" name="produit_id" class="form-control select2" required>
+                        <select id="produit_id_field" name="produit_id" class="form-control select2 @error('produit_id') is-invalid @enderror" required>
+                            <option value="">Sélectionnez un produit</option>
                             @foreach($produits as $produit)
-                                <option value="{{ $produit->id }}">{{ $produit->nom }}</option>
+                                <option value="{{ $produit->id }}" {{ old('produit_id') == $produit->id ? 'selected' : '' }}>{{ $produit->nom }}</option>
                             @endforeach
                         </select>
+                        @error('produit_id')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
                     </div>
                     
                     <div class="mb-3">
                         <label for="type_transaction_field" class="form-label">Type</label>
-                        <select id="type_transaction_field" name="type_transaction" class="form-control" required>
-                            <option value="Vente">Vente</option>
-                            <option value="Distribution">Distribution</option>
+                        <select id="type_transaction_field" name="type_transaction" class="form-control @error('type_transaction') is-invalid @enderror" required>
+                            <option value="">Sélectionnez un type</option>
+                            <option value="Vente" {{ old('type_transaction') == 'Vente' ? 'selected' : '' }}>Vente</option>
+                            <option value="Distribution" {{ old('type_transaction') == 'Distribution' ? 'selected' : '' }}>Distribution</option>
                         </select>
+                        @error('type_transaction')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
                     </div>
                     
                     <div class="mb-3">
                         <label for="date_transaction_field" class="form-label">Date</label>
-                        <input type="date" id="date_transaction_field" name="date_transaction" class="form-control" required>
+                        <input type="date" id="date_transaction_field" name="date_transaction" value="{{ old('date_transaction') }}" class="form-control @error('date_transaction') is-invalid @enderror" required>
+                        @error('date_transaction')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
                     </div>
                     
                     <div class="mb-3">
                         <label for="quantite_field" class="form-label">Quantité</label>
-                        <input type="number" step="0.01" id="quantite_field" name="quantite" class="form-control" required>
+                        <input type="number" step="0.01" id="quantite_field" name="quantite" value="{{ old('quantite') }}" class="form-control @error('quantite') is-invalid @enderror" required>
+                        @error('quantite')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
                     </div>
                     
                     <div class="mb-3">
                         <label for="prix_unitaire_field" class="form-label">Prix unitaire (si Vente)</label>
-                        <input type="number" step="0.01" id="prix_unitaire_field" name="prix_unitaire" class="form-control">
+                        <input type="number" step="0.01" id="prix_unitaire_field" name="prix_unitaire" value="{{ old('prix_unitaire') }}" class="form-control @error('prix_unitaire') is-invalid @enderror">
+                        @error('prix_unitaire')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
                     </div>
                     
                     <div class="mb-3">
                         <label for="destinataire_field" class="form-label">Destinataire / Acheteur</label>
-                        <input type="text" id="destinataire_field" name="destinataire" class="form-control" required>
+                        <input type="text" id="destinataire_field" name="destinataire" value="{{ old('destinataire') }}" class="form-control @error('destinataire') is-invalid @enderror" required>
+                        @error('destinataire')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
                     </div>
+                    
+                    <!-- Affichage des erreurs spécifiques qui ne correspondent pas aux champs -->
+                    @error('stock')
+                        <div class="alert alert-danger mb-3">
+                            <i class="fas fa-exclamation-circle me-2"></i>
+                            {{ $message }}
+                        </div>
+                    @enderror
+                    
+                    @error('error')
+                        <div class="alert alert-danger mb-3">
+                            <i class="fas fa-exclamation-circle me-2"></i>
+                            {{ $message }}
+                        </div>
+                    @enderror
                     
                     <div class="button-container">
                         <button type="submit" class="btn-primary">
@@ -668,9 +726,31 @@
                     allowClear: true
                 });
                 
+                // Gestion conditionnelle du champ prix_unitaire
+                $('#type_transaction_field').change(function() {
+                    if ($(this).val() === 'Vente') {
+                        $('#prix_unitaire_field').prop('required', true);
+                        $('label[for="prix_unitaire_field"]').text('Prix unitaire (obligatoire)');
+                    } else {
+                        $('#prix_unitaire_field').prop('required', false);
+                        $('label[for="prix_unitaire_field"]').text('Prix unitaire (si Vente)');
+                    }
+                });
+                
+                // Déclencher le changement au chargement
+                $('#type_transaction_field').trigger('change');
+                
                 // Afficher le modal d'erreur si des erreurs sont présentes
                 @if ($errors->any())
-                    showErrorModal({!! json_encode($errors->all()) !!});
+                    const errors = {!! json_encode($errors->all()) !!};
+                    if (errors.length > 0) {
+                        showErrorModal(errors);
+                    }
+                @endif
+                
+                // Afficher le modal de succès si le message flash existe
+                @if (session('success'))
+                    showSuccessModal("{{ session('success') }}");
                 @endif
             });
             
@@ -684,8 +764,11 @@
                 }, 2000);
             });
             
-            function showSuccessModal() {
+            function showSuccessModal(message = null) {
                 const modal = document.getElementById('successModal');
+                if (message) {
+                    document.querySelector('#successModal .modal-message').textContent = message;
+                }
                 if (modal) {
                     modal.style.display = 'block';
                 }
