@@ -3,6 +3,7 @@ use App\Http\Controllers\ProduitController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\StatistiqueController;
 use App\Http\Controllers\TransactionController;
+use App\Http\Controllers\RapportController;
 use App\Models\Produit;
 use Illuminate\Http\Request;
 
@@ -55,6 +56,9 @@ Route::middleware('auth')->group(function () {
     Route::get('/statistique', function () {
         return view('statistique.stat');
     });
+
+    Route::get('/rapport-pdf', [RapportController::class, 'exportPDF'])->name('rapport.pdf');
+
 });
 
 require __DIR__.'/auth.php';
