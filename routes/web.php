@@ -4,6 +4,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\StatistiqueController;
 use App\Http\Controllers\TransactionController;
 use App\Http\Controllers\RapportController;
+use App\Http\Controllers\StatController;
 use App\Models\Produit;
 use Illuminate\Http\Request;
 
@@ -46,18 +47,17 @@ Route::middleware('auth')->group(function () {
         return view('stockage.stock');
     });
 
-
     // Transactions
     Route::resource('transaction', TransactionController::class)->except(['show']);
     Route::get('/transaction/filter', [TransactionController::class, 'filter'])->name('transaction.filter');
     Route::get('/transaction/search', [TransactionController::class, 'search'])->name('transaction.search');
 
     // Statistiques
-    Route::get('/statistique', function () {
-        return view('statistique.stat');
-    });
+    Route::get('/statistique', [TransactionController::class, 'dashboard'])->middleware('auth')->name('statistiques.dash');
 
-    Route::get('/rapport-pdf', [RapportController::class, 'exportPDF'])->name('rapport.pdf');
+    // Rapport
+    Route::get('/transaction/report', [TransactionController::class, 'generateReport'])->name('transaction.report');
+
 
 });
 

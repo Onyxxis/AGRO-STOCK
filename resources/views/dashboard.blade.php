@@ -356,7 +356,7 @@
                             <i class="fas fa-user-cog me-2"></i>Profil
                         </a>
                     </li>
-    
+
                     <li><hr class="dropdown-divider" /></li>
                     <li>
                         <form method="POST" action="{{ route('logout') }}">
@@ -404,7 +404,6 @@
                     <span>Commandes</span>
                 </a>
             </li>
-            <li>
                 <a href="/statistique">
                     <i class="fas fa-chart-bar"></i>
                     <span>Rapports</span>

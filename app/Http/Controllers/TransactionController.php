@@ -8,6 +8,8 @@ use App\Models\Produit;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Log;
+use Barryvdh\DomPDF\Facade\Pdf;
+use App\Charts\TransactionChart;
 
 class TransactionController extends Controller
 {
@@ -176,4 +178,79 @@ class TransactionController extends Controller
 
         return view('transaction.index', compact('transactions'));
     }
+
+
+// ... generateur de rapport en pdf
+
+public function generateReport(Request $request)
+{
+    $query = Transaction::with('produit');
+
+    if ($request->filled('type_transaction') && $request->type_transaction != 'tout') {
+        $query->where('type_transaction', $request->type_transaction);
+    }
+
+    if ($request->filled('produit_id') && $request->produit_id != 'tout') {
+        $query->where('produit_id', $request->produit_id);
+    }
+
+    if ($request->filled('start_date') && $request->filled('end_date')) {
+        $query->whereBetween('date_transaction', [
+            Carbon::parse($request->start_date)->startOfDay(),
+            Carbon::parse($request->end_date)->endOfDay(),
+        ]);
+    }
+
+    $transactions = $query->get();
+    $totalVentes = $transactions->where('type_transaction', 'Vente')->sum('quantite');
+    $totalDistributions = $transactions->where('type_transaction', 'Distribution')->sum('quantite');
+    $chiffreAffaires = $transactions->where('type_transaction', 'Vente')->sum(function($t) {
+        return $t->quantite * $t->prix_unitaire;
+    });
+
+    $pdf = Pdf::loadView('transaction.report', [
+        'transactions' => $transactions,
+        'totalVentes' => $totalVentes,
+        'totalDistributions' => $totalDistributions,
+        'chiffreAffaires' => $chiffreAffaires,
+        'start_date' => $request->start_date ?? null,
+        'end_date' => $request->end_date ?? null,
+    ]);
+
+    return $pdf->download('rapport-transactions.pdf');
+}
+
+// statistiques
+
+public function dashboard()
+{
+    // Données pour les transactions (ventes/distributions) par mois
+    $transactionsByMonth = Transaction::selectRaw('
+            MONTH(date_transaction) as month,
+            SUM(quantite) as total_quantite,
+            type_transaction
+        ')
+        ->groupBy('month', 'type_transaction')
+        ->orderBy('month')
+        ->get()
+        ->groupBy('month');
+
+    // Données pour les stocks
+    $stocks = Stock::with('produit')->get();
+    $stockByProduct = [];
+
+    foreach ($stocks as $stock) {
+        $productName = $stock->produit->nom;
+        if (!isset($stockByProduct[$productName])) {
+            $stockByProduct[$productName] = 0;
+        }
+        $stockByProduct[$productName] += $stock->quantite_stockee;
+    }
+
+    return view('statistique.dash', [
+        'transactionsByMonth' => $transactionsByMonth,
+        'stockByProduct' => $stockByProduct
+    ]);
+}
+
 }

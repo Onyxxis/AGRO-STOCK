@@ -474,6 +474,26 @@
             color: white;
         }
 
+        /* Styles pour le bouton de rapport */
+        .report-btn {
+            background-color: #e3342f;
+            color: white;
+            border: none;
+            padding: 0.6rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .report-btn:hover {
+            background-color: #cc1f1a;
+            transform: translateY(-2px);
+        }
+
         @media (max-width: 992px) {
             .filter-item {
                 min-width: 120px;
@@ -531,7 +551,7 @@
         </div>
 
         <div class="user-info">
-            <span>John Doe</span>
+            <span>{{ Auth::user()->name }}</span>
             <div class="dropdown">
                 <div class="avatar" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
                     <i class="fas fa-user"></i>
@@ -598,6 +618,14 @@
     </div>
 
     <div class="content" id="content">
+        <!-- Bouton de génération de rapport avec options -->
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2></h2>
+            <button class="btn btn-danger report-btn" data-bs-toggle="modal" data-bs-target="#reportModal">
+                <i class="fas fa-file-pdf me-2"></i> Générer Rapport
+            </button>
+        </div>
+
         <div class="filter-container">
             <form method="GET" action="{{ route('transaction.filter') }}" class="filter-form">
                 <div class="filter-row">
@@ -678,7 +706,7 @@
                         <td>{{ $transaction->destinataire }}</td>
                         <td>
                             <div class="action-buttons">
-                                <button class="edit-btn" data-bs-toggle="modal" data-bs-target="#editModal" 
+                                <button class="edit-btn" data-bs-toggle="modal" data-bs-target="#editModal"
                                     data-id="{{ $transaction->id }}"
                                     data-produit="{{ $transaction->produit_id }}"
                                     data-type="{{ $transaction->type_transaction }}"
@@ -704,67 +732,67 @@
             <i class="fas fa-plus"></i>
         </a>
 
-        <!-- Modal d'édition de transaction -->
         <!-- Modal pour l'édition de transaction -->
-<div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Modifier la transaction</h5>
-                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <form id="editForm" method="POST" action="">
-                    @csrf
-                    @method('PUT')
-                    <div class="row mb-3">
-                        <div class="col-md-6">
-                            <label for="edit_produit_id" class="form-label">Produit</label>
-                            <select name="produit_id" id="edit_produit_id" class="form-control" required>
-                                @foreach($produits as $produit)
-                                <option value="{{ $produit->id }}">{{ $produit->nom }}</option>
-                                @endforeach
-                            </select>
-                        </div>
-                        <div class="col-md-6">
-                            <label for="edit_type_transaction" class="form-label">Type de transaction</label>
-                            <select name="type_transaction" id="edit_type_transaction" class="form-control" required>
-                                <option value="Vente">Vente</option>
-                                <option value="Distribution">Distribution</option>
-                            </select>
-                        </div>
+        <div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Modifier la transaction</h5>
+                        <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
                     </div>
-                    <div class="row mb-3">
-                        <div class="col-md-6">
-                            <label for="edit_quantite" class="form-label">Quantité (kg)</label>
-                            <input type="number" name="quantite" id="edit_quantite" class="form-control" required min="0" step="0.01">
-                        </div>
-                        <div class="col-md-6">
-                            <label for="edit_prix_unitaire" class="form-label">Prix unitaire (FCFA)</label>
-                            <input type="number" name="prix_unitaire" id="edit_prix_unitaire" class="form-control" min="0" step="0.01">
-                        </div>
+                    <div class="modal-body">
+                        <form id="editForm" method="POST" action="">
+                            @csrf
+                            @method('PUT')
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <label for="edit_produit_id" class="form-label">Produit</label>
+                                    <select name="produit_id" id="edit_produit_id" class="form-control" required>
+                                        @foreach($produits as $produit)
+                                        <option value="{{ $produit->id }}">{{ $produit->nom }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="edit_type_transaction" class="form-label">Type de transaction</label>
+                                    <select name="type_transaction" id="edit_type_transaction" class="form-control" required>
+                                        <option value="Vente">Vente</option>
+                                        <option value="Distribution">Distribution</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <label for="edit_quantite" class="form-label">Quantité (kg)</label>
+                                    <input type="number" name="quantite" id="edit_quantite" class="form-control" required min="0" step="0.01">
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="edit_prix_unitaire" class="form-label">Prix unitaire (FCFA)</label>
+                                    <input type="number" name="prix_unitaire" id="edit_prix_unitaire" class="form-control" min="0" step="0.01">
+                                </div>
+                            </div>
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <label for="edit_date_transaction" class="form-label">Date de transaction</label>
+                                    <input type="date" name="date_transaction" id="edit_date_transaction" class="form-control" required>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="edit_destinataire" class="form-label">Destinataire</label>
+                                    <input type="text" name="destinataire" id="edit_destinataire" class="form-control" required>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                                <button type="submit" class="btn btn-primary">Enregistrer les modifications</button>
+                            </div>
+                        </form>
                     </div>
-                    <div class="row mb-3">
-                        <div class="col-md-6">
-                            <label for="edit_date_transaction" class="form-label">Date de transaction</label>
-                            <input type="date" name="date_transaction" id="edit_date_transaction" class="form-control" required>
-                        </div>
-                        <div class="col-md-6">
-                            <label for="edit_destinataire" class="form-label">Destinataire</label>
-                            <input type="text" name="destinataire" id="edit_destinataire" class="form-control" required>
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
-                        <button type="submit" class="btn btn-primary">Enregistrer les modifications</button>
-                    </div>
-                </form>
+                </div>
             </div>
         </div>
-    </div>
-</div>
+
         <!-- Modal de confirmation de suppression -->
         <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
             <div class="modal-dialog">
@@ -785,6 +813,32 @@
                             @method('DELETE')
                             <button type="submit" class="btn btn-danger">Supprimer</button>
                         </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal de génération de rapport -->
+        <div class="modal fade" id="reportModal" tabindex="-1" aria-labelledby="reportModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Options du Rapport</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <p>Veuillez sélectionner le type de rapport à générer :</p>
+                        <div class="d-grid gap-2">
+                            <a href="{{ route('transaction.report') }}" class="btn btn-outline-danger">
+                                <i class="fas fa-file-pdf me-2"></i> Rapport complet (toutes les transactions)
+                            </a>
+                            <a href="{{ route('transaction.report', request()->query()) }}" class="btn btn-danger">
+                                <i class="fas fa-filter me-2"></i> Rapport avec les filtres actuels
+                            </a>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
                     </div>
                 </div>
             </div>
@@ -815,82 +869,80 @@
 
         // Setup edit modal
         document.addEventListener('DOMContentLoaded', function() {
-    const editModal = document.getElementById('editModal');
-    if (editModal) {
-        editModal.addEventListener('show.bs.modal', function(event) {
-            const button = event.relatedTarget;
-            const id = button.getAttribute('data-id');
-            const produitId = button.getAttribute('data-produit');
-            const type = button.getAttribute('data-type');
-            const quantite = button.getAttribute('data-quantite');
-            const prix = button.getAttribute('data-prix');
-            const date = button.getAttribute('data-date');
-            const destinataire = button.getAttribute('data-destinataire');
-            
-            // Set form action
-            const form = document.getElementById('editForm');
-            form.action = `/transactions/${id}`;
-            
-            // Fill form fields
-            // Sélection du produit dans la liste déroulante
-            const produitSelect = document.getElementById('edit_produit_id');
-            for (let i = 0; i < produitSelect.options.length; i++) {
-                if (produitSelect.options[i].value == produitId) {
-                    produitSelect.selectedIndex = i;
-                    break;
-                }
-            }
-            
-            document.getElementById('edit_type_transaction').value = type;
-            document.getElementById('edit_quantite').value = quantite;
-            document.getElementById('edit_prix_unitaire').value = prix || 0;
-            document.getElementById('edit_date_transaction').value = date;
-            document.getElementById('edit_destinataire').value = destinataire;
-            
-            // Toggle prix_unitaire field visibility based on transaction type
-            const prixField = document.getElementById('edit_prix_unitaire');
-            const prixContainer = prixField.closest('.col-md-6');
-            
-            if (type === 'Distribution') {
-                prixContainer.style.display = 'none';
-                prixField.value = '0';
-                prixField.required = false;
-            } else {
-                prixContainer.style.display = 'block';
-                prixField.required = true;
-            }
-        });
+            const editModal = document.getElementById('editModal');
+            if (editModal) {
+                editModal.addEventListener('show.bs.modal', function(event) {
+                    const button = event.relatedTarget;
+                    const id = button.getAttribute('data-id');
+                    const produitId = button.getAttribute('data-produit');
+                    const type = button.getAttribute('data-type');
+                    const quantite = button.getAttribute('data-quantite');
+                    const prix = button.getAttribute('data-prix');
+                    const date = button.getAttribute('data-date');
+                    const destinataire = button.getAttribute('data-destinataire');
 
-        // Add event listener for type change
-        document.getElementById('edit_type_transaction').addEventListener('change', function() {
-            const prixField = document.getElementById('edit_prix_unitaire');
-            const prixContainer = prixField.closest('.col-md-6');
-            
-            if (this.value === 'Distribution') {
-                prixContainer.style.display = 'none';
-                prixField.value = '0';
-                prixField.required = false;
-            } else {
-                prixContainer.style.display = 'block';
-                prixField.required = true;
+                    // Set form action
+                    const form = document.getElementById('editForm');
+                    form.action = `/transactions/${id}`;
+
+                    // Fill form fields
+                    const produitSelect = document.getElementById('edit_produit_id');
+                    for (let i = 0; i < produitSelect.options.length; i++) {
+                        if (produitSelect.options[i].value == produitId) {
+                            produitSelect.selectedIndex = i;
+                            break;
+                        }
+                    }
+
+                    document.getElementById('edit_type_transaction').value = type;
+                    document.getElementById('edit_quantite').value = quantite;
+                    document.getElementById('edit_prix_unitaire').value = prix || 0;
+                    document.getElementById('edit_date_transaction').value = date;
+                    document.getElementById('edit_destinataire').value = destinataire;
+
+                    // Toggle prix_unitaire field visibility
+                    const prixField = document.getElementById('edit_prix_unitaire');
+                    const prixContainer = prixField.closest('.col-md-6');
+
+                    if (type === 'Distribution') {
+                        prixContainer.style.display = 'none';
+                        prixField.value = '0';
+                        prixField.required = false;
+                    } else {
+                        prixContainer.style.display = 'block';
+                        prixField.required = true;
+                    }
+                });
+
+                // Add event listener for type change
+                document.getElementById('edit_type_transaction').addEventListener('change', function() {
+                    const prixField = document.getElementById('edit_prix_unitaire');
+                    const prixContainer = prixField.closest('.col-md-6');
+
+                    if (this.value === 'Distribution') {
+                        prixContainer.style.display = 'none';
+                        prixField.value = '0';
+                        prixField.required = false;
+                    } else {
+                        prixContainer.style.display = 'block';
+                        prixField.required = true;
+                    }
+                });
             }
         });
-    }
-});
 
         // Setup delete modal
         document.addEventListener('DOMContentLoaded', function() {
-        const deleteModal = document.getElementById('deleteModal');
-    if (deleteModal) {
-        deleteModal.addEventListener('show.bs.modal', function(event) {
-            const button = event.relatedTarget;
-            const id = button.getAttribute('data-id');
-            const form = document.getElementById('deleteForm');
-            // Utilisez la route nommée pour transactions.destroy
-            form.action = `{{ route('transaction.index') }}/${id}`;
+            const deleteModal = document.getElementById('deleteModal');
+            if (deleteModal) {
+                deleteModal.addEventListener('show.bs.modal', function(event) {
+                    const button = event.relatedTarget;
+                    const id = button.getAttribute('data-id');
+                    const form = document.getElementById('deleteForm');
+                    form.action = `{{ route('transaction.index') }}/${id}`;
+                });
+            }
         });
-        }
-    });
     </script>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
