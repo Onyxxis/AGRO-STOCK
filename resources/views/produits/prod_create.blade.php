@@ -431,7 +431,7 @@
                 />
             </div>
             <div class="user-info">
-                <span>John Doe</span>
+                <span>{{ Auth::user()->name }}</span>
                 <div class="dropdown">
                     <div
                         class="avatar"
