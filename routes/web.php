@@ -37,12 +37,23 @@ Route::middleware(['auth'])->group(function () {
     })->name('agriculteur.dashboard');
 });
 
-//les routes accessibles aux utilisateurs authentifiés
+//les routes accessibles aux utilisateurs authentifiés (admin et agriculteur)
 Route::middleware(['auth'])->group(function () {
-    // Routes accessibles uniquement aux agriculteurs
+    //profil
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+
+    //produits
+    Route::get('/produit', [ProduitController::class, 'index'])->name('produits.index');  // Afficher la liste des produits
+    Route::get('/produit/create', [ProduitController::class, 'create'])->name('produits.create');  // Créer un produit
+    Route::post('/produit', [ProduitController::class, 'store'])->name('produits.store');  // Enregistrer un produit
+    Route::put('/produit/{produit}', [ProduitController::class, 'update'])->name('produits.update');  // Mettre à jour un produit
+    // Route::get('/produit/{produit}', [ProduitController::class, 'show'])->name('produits.show');  // Voir un produit spécifique
+    Route::get('/produit/{produit}/edit', [ProduitController::class, 'edit'])->name('produits.edit');
+    Route::delete('/produit/{produit}', [ProduitController::class, 'destroy'])->name('produits.destroy');  // Supprimer un produit
+    Route::get('/produit/filter', [ProduitController::class, 'filter'])->name('produits.filter');
+    Route::get('/produit/search', [ProduitController::class, 'search'])->name('produits.search');
 
 });
 
@@ -54,18 +65,6 @@ Route::middleware(['auth'])->group(function () {
 // Routes accessibles uniquement a l'admin
 
 Route::middleware(['auth', 'role:admin'])->group(function () {
-
-//produits
-    Route::get('/produit', [ProduitController::class, 'index'])->name('produits.index');  // Afficher la liste des produits
-    Route::get('/produit/create', [ProduitController::class, 'create'])->name('produits.create');  // Créer un produit
-    Route::post('/produit', [ProduitController::class, 'store'])->name('produits.store');  // Enregistrer un produit
-    Route::put('/produit/{produit}', [ProduitController::class, 'update'])->name('produits.update');  // Mettre à jour un produit
-    // Route::get('/produit/{produit}', [ProduitController::class, 'show'])->name('produits.show');  // Voir un produit spécifique
-    Route::get('/produit/{produit}/edit', [ProduitController::class, 'edit'])->name('produits.edit');
-    Route::delete('/produit/{produit}', [ProduitController::class, 'destroy'])->name('produits.destroy');  // Supprimer un produit
-    Route::get('/produit/filter', [ProduitController::class, 'filter'])->name('produits.filter');
-    Route::get('/produit/search', [ProduitController::class, 'search'])->name('produits.search');
-
     //stockage
     Route::resource('stockage', StockController::class);
     // Transactions
