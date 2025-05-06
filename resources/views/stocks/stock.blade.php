@@ -448,12 +448,104 @@
         </div>
 
         <div class="content" id="content">
-    <div class="welcome-section">
-        <h2>Page de stock</h2>
-        <p>Gérez efficacement votre stock de produits agricoles</p>
-    </div>
-
-</div>
+            <!-- Optionnel : formulaire de recherche (ex: par lieu ou produit) -->
+            <div class="filter-container">
+                <form method="GET" action="{{ route('stocks.search') }}" class="filter-form">
+                    <div class="filter-row">
+                        <div class="filter-item">
+                            <label for="search" class="filter-label">Rechercher</label>
+                            <input type="text" name="search" id="search" placeholder="Nom produit ou lieu..." class="filter-date">
+                        </div>
+                        <div class="filter-item">
+                            <button type="submit" class="filter-button">
+                                <i class="fas fa-search"></i> Rechercher
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        
+            <!-- Tableau des stocks -->
+            <div class="table-responsive">
+                <table class="product-table">
+                    <thead>
+                        <tr>
+                            <th>Nom du produit</th>
+                            <th>Type</th>
+                            <th>Quantité stockée (kg)</th>
+                            <th>Lieu de stockage</th>
+                            <th>Date d'enregistrement</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="product-table-body">
+                        @foreach($stocks as $stock)
+                        <tr>
+                            <td>{{ $stock->produit->nom }}</td>
+                            <td>{{ $stock->produit->type }}</td>
+                            <td>{{ $stock->quantite_stockee }}</td>
+                            <td>{{ $stock->lieu_stockage }}</td>
+                            <td>{{ $stock->created_at->format('d/m/Y') }}</td>
+                            <td>
+                                <div class="action-buttons">
+                                    <button class="edit-btn" onclick="window.location.href='{{ route('stocks.edit', $stock->id) }}'">
+                                        <i class="fas fa-pen"></i>
+                                    </button>
+                                    <button class="delete-btn" data-bs-toggle="modal" data-bs-target="#deleteModal" data-url="{{ route('stocks.destroy', $stock->id) }}">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
+        
+            <!-- Bouton flottant d’ajout -->
+            <a href="{{ route('stocks.create') }}" class="floating-add-btn">
+                <i class="fas fa-plus"></i>
+            </a>
+        
+            <!-- Modal de suppression -->
+            <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Confirmation</h5>
+                            <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            Voulez-vous vraiment supprimer ce stock ?
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                            <form id="deleteForm" method="POST" action="">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="btn btn-danger">Supprimer</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Script pour injecter l’URL dynamique dans le formulaire de suppression -->
+        <script>
+            const deleteButtons = document.querySelectorAll('.delete-btn');
+            const deleteForm = document.getElementById('deleteForm');
+        
+            deleteButtons.forEach(btn => {
+                btn.addEventListener('click', function () {
+                    const url = this.getAttribute('data-url');
+                    deleteForm.setAttribute('action', url);
+                });
+            });
+        </script>
+        
 
 
         <script>

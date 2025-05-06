@@ -36,12 +36,29 @@ Route::delete('/produit/{produit}', [ProduitController::class, 'destroy'])->name
 Route::get('/produit/filter', [ProduitController::class, 'filter'])->name('produits.filter');
 Route::get('/produit/search', [ProduitController::class, 'search'])->name('produits.search');
 
+// Routes pour la gestion des stocks
+Route::resource('stocks', StockController::class);
+Route::get('/rapports/stocks', [StockController::class, 'rapport'])->name('stocks.rapport');
+
+Route::get('/stock', [StockController::class, 'index'])->name('stocks.index');  // Afficher la liste des stocks
+Route::get('/stock/create', [StockController::class, 'create'])->name('stocks.create');  // Créer un stock
+Route::post('/stock', [StockController::class, 'store'])->name('stocks.store');  // Enregistrer un stock
+Route::put('/stock/{stock}', [StockController::class, 'update'])->name('stocks.update');  // Mettre à jour un stock
+
+Route::get('/stock/{stock}/edit', [StockController::class, 'edit'])->name('stocks.edit');
+Route::delete('/stock/{stock}', [StockController::class, 'destroy'])->name('stocks.destroy');  // Supprimer un stock
+Route::get('/stock/filter', [StockController::class, 'filter'])->name('stocks.filter');
+Route::get('/stock/search', [StockController::class, 'search'])->name('stocks.search');
 
 
 
-Route::get('/stockage', function () {
-    return view('stockage.stock');
-});
+// Route::get('/stockage', function () {
+//     return view('stockage.stock');
+// });
+
+
+    
+
 
 
 Route::get('/statistique', function () {
