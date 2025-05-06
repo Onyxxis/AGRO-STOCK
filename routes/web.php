@@ -21,15 +21,30 @@ Route::get('/signup', function () {
     return view('auth.signup');
 });
 
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
-
 Route::middleware('auth')->group(function () {
-    // Profil
+    Route::get('/dashboard', function () {
+        return view('dashboard');
+    })->name('dashboard');
+});
+
+
+Route::middleware(['auth', 'role: admin,agriculteur'])->group(function () {
+    // Routes accessibles uniquement aux agriculteurs
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+
+    // Autres routes pour agriculteurs...
+});
+
+
+Route::middleware(['auth', 'role:agriculteur'])->group(function () {
+    // Routes accessibles uniquement aux agriculteurs
+    // Autres routes pour agriculteurs...
+});
+
+Route::middleware(['auth', 'role:admin'])->group(function () {
+
 
     Route::get('/produit', [ProduitController::class, 'index'])->name('produits.index');  // Afficher la liste des produits
     Route::get('/produit/create', [ProduitController::class, 'create'])->name('produits.create');  // Créer un produit

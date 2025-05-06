@@ -27,7 +27,7 @@ class TransactionController extends Controller
     {
         try {
             \Log::info('1. Début de la méthode store avec données: ' . json_encode($request->all()));
-    
+
             $request->validate([
                 'produit_id' => 'required|exists:produits,id',
                 'type_transaction' => 'required|in:Vente,Distribution',
@@ -36,28 +36,28 @@ class TransactionController extends Controller
                 'prix_unitaire' => 'nullable|required_if:type_transaction,Vente|numeric|min:0',
                 'destinataire' => 'required|string|max:255',
             ]);
-    
+
             \Log::info('2. Validation réussie');
-    
+
             // Chercher le stock pour ce produit
             $stock = Stock::where('produit_id', $request->produit_id)->first();
-            
+
             \Log::info('3. Stock récupéré: ' . ($stock ? 'Oui' : 'Non'));
-    
+
             // Si le stock n'existe pas, afficher un message d'erreur
             if (!$stock) {
                 \Log::info('4. Stock non récupéré');
                 return back()->withErrors(['stock' => 'Stock non récupéré pour ce produit.']);
             }
-    
+
             // Vérifier que le stock est suffisant
             if ($stock->quantite_stockee < $request->quantite) {
                 \Log::info('5. Stock insuffisant');
                 return back()->withErrors(['quantite' => 'Stock insuffisant pour cette transaction.']);
             }
-    
+
             \Log::info('6. Stock suffisant, création de la transaction');
-    
+
             // Créer la transaction
             $transaction = Transaction::create([
                 'produit_id' => $request->produit_id,
@@ -67,17 +67,17 @@ class TransactionController extends Controller
                 'prix_unitaire' => $request->prix_unitaire,
                 'destinataire' => $request->destinataire,
             ]);
-    
+
             \Log::info('7. Transaction créée avec succès');
-    
+
             // Mettre à jour le stock
             $stock->quantite_stockee -= $request->quantite;
             $stock->save();
-    
+
             \Log::info('8. Stock mis à jour');
-    
+
             \Log::info('9. Tentative de redirection');
-    
+
             return redirect()->route('transaction.index')->with('success', 'Transaction enregistrée avec succès.');
         } catch (\Exception $e) {
             \Log::error('ERREUR dans store: ' . $e->getMessage());
@@ -108,7 +108,7 @@ class TransactionController extends Controller
 
         // Remettre l'ancienne quantité avant d'appliquer la nouvelle
         $stock->quantite_stockee += $ancienne_quantite;
-        
+
         // Vérifier que le stock est suffisant après la remise de l'ancienne quantité
         if ($stock->quantite_stockee < $request->quantite) {
             return back()->withErrors(['quantite' => 'Stock insuffisant pour cette modification.']);

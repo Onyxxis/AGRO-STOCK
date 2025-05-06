@@ -28,8 +28,15 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerate();
 
-        return redirect()->intended(route('dashboard', absolute: false));
-    }
+
+    // Redirection basée sur le rôle de l'utilisateur
+    $role = Auth::user()->role; // Récupérer le rôle de l'utilisateur
+
+    return match ($role) {
+        'admin' => redirect()->route('dashboard'),  // Redirection vers le dashboard de l'admin
+        'agriculteur' => redirect()->route('agriculteur.dashboard'), // Redirection vers le dashboard de l'agriculteur
+        // default => redirect()->route('home'),  // Redirection par défaut
+    };    }
 
     /**
      * Destroy an authenticated session.
