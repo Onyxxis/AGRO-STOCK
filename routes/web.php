@@ -73,9 +73,17 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::get('/transaction/search', [TransactionController::class, 'search'])->name('transaction.search');
 
     // Statistiques
-    Route::get('/statistique', function () {
-        return view('statistique.stat');
-    });
+//     Route::get('/statistique', function () {
+//         return view('statistique.stat');
+//     });
+  
+  // Statistiques
+    Route::get('/statistique', [TransactionController::class, 'dashboard'])->middleware('auth')->name('statistiques.dash');
+
+    // Rapport
+    Route::get('/transaction/report', [TransactionController::class, 'generateReport'])->name('transaction.report');
+
+
 });
 
 require __DIR__.'/auth.php';

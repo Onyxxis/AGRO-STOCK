@@ -7,6 +7,9 @@ use App\Models\Stock;
 use App\Models\Produit;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Log;
+use Barryvdh\DomPDF\Facade\Pdf;
+use App\Charts\TransactionChart;
 
 class TransactionController extends Controller
 {
@@ -26,7 +29,7 @@ class TransactionController extends Controller
     public function store(Request $request)
     {
         try {
-            \Log::info('1. Début de la méthode store avec données: ' . json_encode($request->all()));
+            Log::info('1. Début de la méthode store avec données: ' . json_encode($request->all()));
 
             $request->validate([
                 'produit_id' => 'required|exists:produits,id',
@@ -37,26 +40,26 @@ class TransactionController extends Controller
                 'destinataire' => 'required|string|max:255',
             ]);
 
-            \Log::info('2. Validation réussie');
+            Log::info('2. Validation réussie');
 
             // Chercher le stock pour ce produit
             $stock = Stock::where('produit_id', $request->produit_id)->first();
 
-            \Log::info('3. Stock récupéré: ' . ($stock ? 'Oui' : 'Non'));
+            Log::info('3. Stock récupéré: ' . ($stock ? 'Oui' : 'Non'));
 
             // Si le stock n'existe pas, afficher un message d'erreur
             if (!$stock) {
-                \Log::info('4. Stock non récupéré');
+                Log::info('4. Stock non récupéré');
                 return back()->withErrors(['stock' => 'Stock non récupéré pour ce produit.']);
             }
 
             // Vérifier que le stock est suffisant
             if ($stock->quantite_stockee < $request->quantite) {
-                \Log::info('5. Stock insuffisant');
+                Log::info('5. Stock insuffisant');
                 return back()->withErrors(['quantite' => 'Stock insuffisant pour cette transaction.']);
             }
 
-            \Log::info('6. Stock suffisant, création de la transaction');
+            Log::info('6. Stock suffisant, création de la transaction');
 
             // Créer la transaction
             $transaction = Transaction::create([
@@ -68,20 +71,20 @@ class TransactionController extends Controller
                 'destinataire' => $request->destinataire,
             ]);
 
-            \Log::info('7. Transaction créée avec succès');
+            Log::info('7. Transaction créée avec succès');
 
             // Mettre à jour le stock
             $stock->quantite_stockee -= $request->quantite;
             $stock->save();
 
-            \Log::info('8. Stock mis à jour');
+            Log::info('8. Stock mis à jour');
 
-            \Log::info('9. Tentative de redirection');
+            Log::info('9. Tentative de redirection');
 
             return redirect()->route('transaction.index')->with('success', 'Transaction enregistrée avec succès.');
         } catch (\Exception $e) {
-            \Log::error('ERREUR dans store: ' . $e->getMessage());
-            \Log::error('Trace: ' . $e->getTraceAsString());
+            Log::error('ERREUR dans store: ' . $e->getMessage());
+            Log::error('Trace: ' . $e->getTraceAsString());
             return back()->withErrors(['error' => 'Une erreur est survenue: ' . $e->getMessage()]);
         }
     }
@@ -175,4 +178,79 @@ class TransactionController extends Controller
 
         return view('transaction.index', compact('transactions'));
     }
+
+
+// ... generateur de rapport en pdf
+
+public function generateReport(Request $request)
+{
+    $query = Transaction::with('produit');
+
+    if ($request->filled('type_transaction') && $request->type_transaction != 'tout') {
+        $query->where('type_transaction', $request->type_transaction);
+    }
+
+    if ($request->filled('produit_id') && $request->produit_id != 'tout') {
+        $query->where('produit_id', $request->produit_id);
+    }
+
+    if ($request->filled('start_date') && $request->filled('end_date')) {
+        $query->whereBetween('date_transaction', [
+            Carbon::parse($request->start_date)->startOfDay(),
+            Carbon::parse($request->end_date)->endOfDay(),
+        ]);
+    }
+
+    $transactions = $query->get();
+    $totalVentes = $transactions->where('type_transaction', 'Vente')->sum('quantite');
+    $totalDistributions = $transactions->where('type_transaction', 'Distribution')->sum('quantite');
+    $chiffreAffaires = $transactions->where('type_transaction', 'Vente')->sum(function($t) {
+        return $t->quantite * $t->prix_unitaire;
+    });
+
+    $pdf = Pdf::loadView('transaction.report', [
+        'transactions' => $transactions,
+        'totalVentes' => $totalVentes,
+        'totalDistributions' => $totalDistributions,
+        'chiffreAffaires' => $chiffreAffaires,
+        'start_date' => $request->start_date ?? null,
+        'end_date' => $request->end_date ?? null,
+    ]);
+
+    return $pdf->download('rapport-transactions.pdf');
+}
+
+// statistiques
+
+public function dashboard()
+{
+    // Données pour les transactions (ventes/distributions) par mois
+    $transactionsByMonth = Transaction::selectRaw('
+            MONTH(date_transaction) as month,
+            SUM(quantite) as total_quantite,
+            type_transaction
+        ')
+        ->groupBy('month', 'type_transaction')
+        ->orderBy('month')
+        ->get()
+        ->groupBy('month');
+
+    // Données pour les stocks
+    $stocks = Stock::with('produit')->get();
+    $stockByProduct = [];
+
+    foreach ($stocks as $stock) {
+        $productName = $stock->produit->nom;
+        if (!isset($stockByProduct[$productName])) {
+            $stockByProduct[$productName] = 0;
+        }
+        $stockByProduct[$productName] += $stock->quantite_stockee;
+    }
+
+    return view('statistique.dash', [
+        'transactionsByMonth' => $transactionsByMonth,
+        'stockByProduct' => $stockByProduct
+    ]);
+}
+
 }
