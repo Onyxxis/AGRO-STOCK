@@ -3,10 +3,10 @@ use App\Http\Controllers\ProduitController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\StatistiqueController;
 use App\Http\Controllers\TransactionController;
-use App\Http\Controllers\RapportController;
-use App\Http\Controllers\StatController;
 use App\Models\Produit;
 use Illuminate\Http\Request;
+use App\Http\Controllers\StockController;
+
 
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
@@ -23,16 +23,28 @@ Route::get('/signup', function () {
     return view('auth.signup');
 });
 
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
-
+// le dashboard de l'admin
 Route::middleware('auth')->group(function () {
-    // Profil
+    Route::get('/dashboard', function () {
+        return view('dashboard');
+    })->name('dashboard');
+});
+
+// le dashboard de l'agriculteur
+Route::middleware(['auth'])->group(function () {
+    Route::get('/agriculteur/dashboard', function () {
+        return view('agriculteur.dashboard'); // Vue à créer
+    })->name('agriculteur.dashboard');
+});
+
+//les routes accessibles aux utilisateurs authentifiés (admin et agriculteur)
+Route::middleware(['auth'])->group(function () {
+    //profil
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
+    //produits
     Route::get('/produit', [ProduitController::class, 'index'])->name('produits.index');  // Afficher la liste des produits
     Route::get('/produit/create', [ProduitController::class, 'create'])->name('produits.create');  // Créer un produit
     Route::post('/produit', [ProduitController::class, 'store'])->name('produits.store');  // Enregistrer un produit
@@ -43,16 +55,29 @@ Route::middleware('auth')->group(function () {
     Route::get('/produit/filter', [ProduitController::class, 'filter'])->name('produits.filter');
     Route::get('/produit/search', [ProduitController::class, 'search'])->name('produits.search');
 
-    Route::get('/stockage', function () {
-        return view('stockage.stock');
-    });
+});
 
+// Routes accessibles uniquement aux agriculteurs
+    Route::middleware(['auth', 'role:agriculteur'])->group(function () {
+});
+
+
+// Routes accessibles uniquement a l'admin
+
+Route::middleware(['auth', 'role:admin'])->group(function () {
+    //stockage
+    Route::resource('stockage', StockController::class);
     // Transactions
     Route::resource('transaction', TransactionController::class)->except(['show']);
     Route::get('/transaction/filter', [TransactionController::class, 'filter'])->name('transaction.filter');
     Route::get('/transaction/search', [TransactionController::class, 'search'])->name('transaction.search');
 
     // Statistiques
+//     Route::get('/statistique', function () {
+//         return view('statistique.stat');
+//     });
+  
+  // Statistiques
     Route::get('/statistique', [TransactionController::class, 'dashboard'])->middleware('auth')->name('statistiques.dash');
 
     // Rapport
