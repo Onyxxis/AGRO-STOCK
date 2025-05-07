@@ -36,6 +36,7 @@ class StockController extends Controller
 
     public function edit(Stock $stock)
     {
+        $stock->load('produit'); // Assure le chargement de la relation
         return view('stockage.edit', compact('stock'));
     }
 
@@ -55,4 +56,18 @@ class StockController extends Controller
         $stock->delete();
         return redirect()->route('stockage.index')->with('success', 'Stock supprimé');
     }
+
+    public function search(Request $request)
+{
+    $search = $request->input('search');
+
+    $stocks = Stock::with('produit')
+        ->whereHas('produit', function($query) use ($search) {
+            $query->where('nom', 'like', "%$search%");
+        })
+        ->orWhere('lieu_stockage', 'like', "%$search%")
+        ->get();
+
+    return view('stockage.index', compact('stocks'));
+}
 }

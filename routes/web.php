@@ -65,18 +65,18 @@ Route::middleware(['auth'])->group(function () {
 // Routes accessibles uniquement a l'admin
 
 Route::middleware(['auth', 'role:admin'])->group(function () {
+
     //stockage
     Route::resource('stockage', StockController::class);
+    Route::get('/stockage/search', [StockController::class, 'search'])
+    ->name('stockage.search');
+
     // Transactions
     Route::resource('transaction', TransactionController::class)->except(['show']);
     Route::get('/transaction/filter', [TransactionController::class, 'filter'])->name('transaction.filter');
     Route::get('/transaction/search', [TransactionController::class, 'search'])->name('transaction.search');
 
-    // Statistiques
-//     Route::get('/statistique', function () {
-//         return view('statistique.stat');
-//     });
-  
+
   // Statistiques
     Route::get('/statistique', [TransactionController::class, 'dashboard'])->middleware('auth')->name('statistiques.dash');
 

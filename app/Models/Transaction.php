@@ -14,6 +14,10 @@ class Transaction extends Model
         'prix_unitaire',
         'destinataire'
     ];
+    protected $casts = [
+        'date_transaction' => 'datetime',
+    ];
+
 
     public function produit()
     {

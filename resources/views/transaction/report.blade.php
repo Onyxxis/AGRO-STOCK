@@ -38,23 +38,15 @@
         <tbody>
             @foreach($transactions as $transaction)
             <tr>
-                <td>{{ $transaction->date_transaction->format('d/m/Y') }}</td>
+                <td>{{ \Carbon\Carbon::parse($transaction->date_transaction)->format('d/m/Y') }}</td>
                 <td>{{ $transaction->produit->nom }}</td>
                 <td>{{ $transaction->type_transaction }}</td>
                 <td>{{ $transaction->quantite }}</td>
                 <td>
-                    @if($transaction->type_transaction === 'Vente')
-                    {{ number_format($transaction->prix_unitaire, 2) }} €
-                    @else
-                    -
-                    @endif
+                    {{ number_format($transaction->prix_unitaire ?? 0, 0, ',', ' ') }} FCFA
                 </td>
                 <td>
-                    @if($transaction->type_transaction === 'Vente')
-                    {{ number_format($transaction->quantite * $transaction->prix_unitaire, 2) }} €
-                    @else
-                    -
-                    @endif
+                    {{ number_format(($transaction->quantite * $transaction->prix_unitaire) ?? 0, 0, ',', ' ') }} FCFA
                 </td>
                 <td>{{ $transaction->destinataire }}</td>
             </tr>
@@ -66,7 +58,7 @@
         <div><strong>Total Ventes:</strong> {{ $totalVentes }} unités</div>
         <div><strong>Total Distributions:</strong> {{ $totalDistributions }} unités</div>
         @if($chiffreAffaires > 0)
-        <div><strong>Chiffre d'Affaires:</strong> {{ number_format($chiffreAffaires, 2) }} €</div>
+        <div><strong>Chiffre d'Affaires:</strong> {{ number_format($chiffreAffaires, 0, ',', ' ') }} FCFA</div>
         @endif
     </div>
 </body>

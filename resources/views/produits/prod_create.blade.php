@@ -415,75 +415,78 @@
 
         </style>
     </head>
-    <body>
-    <div id="loading-screen">
-            <video id="loading-video" autoplay loop muted>
-                <source src="{{ asset('loading.mp4') }}" type="video/mp4" />
-            </video>
-        </div>
-        <nav class="top-navbar">
-            <div class="search-bar">
-                <i class="fas fa-search"></i>
-                <input
-                    type="text"
-                    placeholder="Rechercher..."
-                    class="form-control"
-                />
-            </div>
-            <div class="user-info">
-                <span>{{ Auth::user()->name }}</span>
-                <div class="dropdown">
-                    <div
-                        class="avatar"
-                        id="userDropdown"
-                        data-bs-toggle="dropdown"
-                        aria-expanded="false"
-                    >
-                        <i class="fas fa-user"></i>
-                    </div>
-                    <ul class="dropdown-menu">
-                        <li>
-                            <a class="dropdown-item" href="#"
-                                ><i class="fas fa-user-cog me-2"></i>Profil</a
-                            >
-                        </li>
-                        <li>
-                            <a class="dropdown-item" href="#"
-                                ><i class="fas fa-cog me-2"></i>Paramètres</a
-                            >
-                        </li>
-                        <li><hr class="dropdown-divider" /></li>
-                        <li>
-                            <a class="dropdown-item" href="#"
-                                ><i class="fas fa-sign-out-alt me-2"></i
-                                >Déconnexion</a
-                            >
-                        </li>
-                    </ul>
-                </div>
-            </div>
-        </nav>
 
-        <div class="sidebar" id="sidebar">
-            <div class="logo">
-                <h4>
-                    <i class="fas fa-leaf"></i>
-                    <span>Agro Stock</span>
-                </h4><hr>
+<body>
+    <div id="loading-screen">
+        <video id="loading-video" autoplay loop muted>
+            <source src="{{ asset('loading.mp4') }}" type="video/mp4" />
+        </video>
+    </div>
+
+    <nav class="top-navbar">
+        <div class="search-bar">
+            <i class="fas fa-search"></i>
+            <input type="text" placeholder="Rechercher..." class="form-control" />
+        </div>
+        <div class="user-info">
+            <span>{{ Auth::user()->name }}</span>
+            <div class="dropdown">
+                <div class="avatar" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                    <i class="fas fa-user"></i>
+                </div>
+                <ul class="dropdown-menu">
+                    <li>
+                        <a class="dropdown-item" href="{{ route('profile.edit') }}">
+                            <i class="fas fa-user-cog me-2"></i>Profil
+                        </a>
+                    </li>
+                    @unless(auth()->user()->role === 'agriculteur')
+                        <li>
+                            <a class="dropdown-item" href="#">
+                                <i class="fas fa-cog me-2"></i>Paramètres
+                            </a>
+                        </li>
+                    @endunless
+                    <li><hr class="dropdown-divider" /></li>
+                    <li>
+                        <form method="POST" action="{{ route('logout') }}">
+                            @csrf
+                            <a class="dropdown-item" href="{{ route('logout') }}"
+                               onclick="event.preventDefault(); this.closest('form').submit();">
+                                <i class="fas fa-sign-out-alt me-2"></i>Déconnexion
+                            </a>
+                        </form>
+                    </li>
+                </ul>
             </div>
-            <ul>
+        </div>
+    </nav>
+
+    <div class="sidebar" id="sidebar">
+        <div class="logo">
+            <h4>
+                <i class="fas fa-leaf"></i>
+                <span>Agro Stock</span>
+            </h4><hr>
+        </div>
+        <ul>
+            @unless(auth()->user()->role === 'agriculteur')
                 <li>
                     <a href="/dashboard">
                         <i class="fas fa-home"></i>
                         <span>Accueil</span>
                     </a>
                 </li>
-                <li>
-                    <a href="/produit">
-                        <i class="fas fa-box"></i>
-                        <span>Produits</span>
-                    </a>
-                </li>
+            @endunless
+
+            <li>
+                <a href="/produit">
+                    <i class="fas fa-box"></i>
+                    <span>Produits</span>
+                </a>
+            </li>
+
+            @unless(auth()->user()->role === 'agriculteur')
                 <li>
                     <a href="/stockage">
                         <i class="fas fa-warehouse"></i>
@@ -502,185 +505,94 @@
                         <span>Rapports</span>
                     </a>
                 </li>
-            </ul>
-            <div class="collapse-toggle" id="collapseToggle">
-                <i class="fas fa-chevron-left"></i>
-            </div>
+            @endunless
+        </ul>
+        <div class="collapse-toggle" id="collapseToggle">
+            <i class="fas fa-chevron-left"></i>
         </div>
+    </div>
 
-        <div class="content" id="content">
+    <div class="content" id="content">
+        <div class="container">
+            <h2>{{ isset($produit) ? 'Modifier' : 'Ajouter' }} un produit</h2>
 
-    <!-- Formulaire d'ajout de produit -->
+            @if ($errors->any())
+                <div class="alert alert-danger">
+                    <ul>
+                        @foreach ($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+            @endif
 
-<!-- <div class="container">
-    <h2>{{ isset($produit) ? 'Modifier' : 'Ajouter' }} un produit</h2>
+            <form action="{{ isset($produit) ? route('produits.update', $produit->id) : route('produits.store') }}" method="POST">
+                @csrf
+                @if(isset($produit))
+                    @method('PUT')
+                @endif
 
-    @if ($errors->any())
-        <div class="alert alert-danger">
-            <ul>
-                @foreach ($errors->all() as $error)
-                    <li>{{ $error }}</li>
-                @endforeach
-            </ul>
+                <div class="mb-3">
+                    <label for="nom" class="form-label">Nom du produit :</label>
+                    <input type="text" class="form-control" name="nom" value="{{ old('nom', $produit->nom ?? '') }}" required>
+                </div>
+
+                <div class="mb-3">
+                    <label for="type" class="form-label">Type :</label>
+                    <select class="form-control" name="type" id="type" required>
+                        <option value="">Sélectionner un type</option>
+                        <option value="fruits" {{ old("type", $produit->type ?? '') === 'fruits' ? 'selected' : '' }}>Fruits</option>
+                        <option value="legume" {{ old("type", $produit->type ?? '') === 'legume' ? 'selected' : '' }}>Légume</option>
+                        <option value="cereale" {{ old("type", $produit->type ?? '') === 'cereale' ? 'selected' : '' }}>Céréale</option>
+                        <option value="tubercule" {{ old("type", $produit->type ?? '') === 'tubercule' ? 'selected' : '' }}>Tubercule</option>
+                        <option value="autre" {{ old("type", $produit->type ?? '') === 'autre' ? 'selected' : '' }}>Autre</option>
+                    </select>
+                </div>
+
+                <div class="mb-3">
+                    <label for="quantite_recoltee" class="form-label">Quantité :</label>
+                    <input type="number" class="form-control" name="quantite_recoltee" value="{{ old('quantite_recoltee', $produit->quantite_recoltee ?? '') }}" required>
+                </div>
+
+                <div class="mb-3">
+                    <label for="date_recolte" class="form-label">Date de récolte :</label>
+                    <input type="date" class="form-control" name="date_recolte" value="{{ old('date_recolte', $produit->date_recolte ?? '') }}" required>
+                </div>
+
+                <div class="mb-3">
+                    <label for="statut" class="form-label">Statut :</label>
+                    <select class="form-control" name="statut" required>
+                        <option value="Stocké" {{ (isset($produit) && $produit->statut == 'Stocké') ? 'selected' : '' }}>Stocké</option>
+                        <option value="Vendu" {{ (isset($produit) && $produit->statut == 'Vendu') ? 'selected' : '' }}>Vendu</option>
+                        <option value="Distribué" {{ (isset($produit) && $produit->statut == 'Distribué') ? 'selected' : '' }}>Distribué</option>
+                    </select>
+                </div>
+
+                <button type="submit" class="btn w-100" style="color: white; background-color: var(--primary-color);">
+                    {{ isset($produit) ? 'Modifier' : 'Ajouter' }}
+                </button>
+            </form>
         </div>
-    @endif
+    </div>
 
-    <form action="{{ isset($produit) ? route('produits.update', $produit->id) : route('produits.store') }}" method="POST">
-        @csrf
-        @if(isset($produit))
-            @method('PUT')
-        @endif
+    <script>
+        const sidebar = document.getElementById("sidebar");
+        const content = document.getElementById("content");
+        const collapseToggle = document.getElementById("collapseToggle");
 
-        <div class="mb-3">
-            <label for="nom" class="form-label">Nom du produit :</label>
-            <input type="text" class="form-control" name="nom" value="{{ old('nom', $produit->nom ?? '') }}" required>
-        </div>
+        collapseToggle.addEventListener("click", () => {
+            sidebar.classList.toggle("collapsed");
+            content.classList.toggle("collapsed");
+        });
 
-        <div class="mb-3">
-            <label for="type" class="form-label">Type :</label>
-            <input type="text" class="form-control" name="type" value="{{ old('type', $produit->type ?? '') }}" required>
-        </div>
+        window.addEventListener("load", function () {
+            const loadingScreen = document.getElementById("loading-screen");
+            setTimeout(() => {
+                loadingScreen.style.display = "none";
+            }, 2000);
+        });
+    </script>
 
-        <div class="mb-3">
-            <label for="quantite_recoltee" class="form-label">Quantité :</label>
-            <input type="number" class="form-control" name="quantite_recoltee" value="{{ old('quantite_recoltee', $produit->quantite_recoltee ?? '') }}" required>
-        </div>
-
-        <div class="mb-3">
-            <label for="date_recolte" class="form-label">Date de récolte :</label>
-            <input type="date" class="form-control" name="date_recolte" value="{{ old('date_recolte', $produit->date_recolte ?? '') }}" required>
-        </div>
-
-        <div class="mb-3">
-            <label for="statut" class="form-label">Statut :</label>
-            <select class="form-control" name="statut" required>
-                <option value="Stocké" {{ (isset($produit) && $produit->statut == 'Stocké') ? 'selected' : '' }}>Stocké</option>
-                <option value="Vendu" {{ (isset($produit) && $produit->statut == 'Vendu') ? 'selected' : '' }}>Vendu</option>
-                <option value="Distribué" {{ (isset($produit) && $produit->statut == 'Distribué') ? 'selected' : '' }}>Distribué</option>
-            </select>
-        </div>
-
-        <button type="submit" class="btn btn-primary">
-            {{ isset($produit) ? 'Modifier' : 'Ajouter' }}
-        </button>
-    </form>
-</div> -->
-
-<div class="container">
-    <h2>{{ isset($produit) ? 'Modifier' : 'Ajouter' }} un produit</h2>
-
-    @if ($errors->any())
-        <div class="alert alert-danger">
-            <ul>
-                @foreach ($errors->all() as $error)
-                    <li>{{ $error }}</li>
-                @endforeach
-            </ul>
-        </div>
-    @endif
-
-    <form action="{{ isset($produit) ? route('produits.update', $produit->id) : route('produits.store') }}" method="POST">
-        @csrf
-        @if(isset($produit))
-            @method('PUT')
-        @endif
-
-        <div class="mb-3">
-            <label for="nom" class="form-label">Nom du produit :</label>
-            <input type="text" class="form-control" name="nom" value="{{ old('nom', $produit->nom ?? '') }}" required>
-        </div>
-
-        <div class="mb-3">
-            <label for="type" class="form-label">Type :</label>
-            <select class="form-control" name="type" id="type" required>
-                <option value="">Sélectionner un type</option>
-                <option value="fruits" {{ old("type", $produit->type ?? '') === 'fruits' ? 'selected' : '' }}>Fruits</option>
-                <option value="legume" {{ old("type", $produit->type ?? '') === 'legume' ? 'selected' : '' }}>Légume</option>
-                <option value="cereale" {{ old("type", $produit->type ?? '') === 'cereale' ? 'selected' : '' }}>Céréale</option>
-                <option value="tubercule" {{ old("type", $produit->type ?? '') === 'tubercule' ? 'selected' : '' }}>Tubercule</option>
-                <option value="autre" {{ old("type", $produit->type ?? '') === 'autre' ? 'selected' : '' }}>Autre</option>
-            </select>
-        </div>
-
-
-        <div class="mb-3">
-            <label for="quantite_recoltee" class="form-label">Quantité :</label>
-            <input type="number" class="form-control" name="quantite_recoltee" value="{{ old('quantite_recoltee', $produit->quantite_recoltee ?? '') }}" required>
-        </div>
-
-        <div class="mb-3">
-            <label for="date_recolte" class="form-label">Date de récolte :</label>
-            <input type="date" class="form-control" name="date_recolte" value="{{ old('date_recolte', $produit->date_recolte ?? '') }}" required>
-        </div>
-
-        <div class="mb-3">
-            <label for="statut" class="form-label">Statut :</label>
-            <select class="form-control" name="statut" required>
-                <option value="Stocké" {{ (isset($produit) && $produit->statut == 'Stocké') ? 'selected' : '' }}>Stocké</option>
-                <option value="Vendu" {{ (isset($produit) && $produit->statut == 'Vendu') ? 'selected' : '' }}>Vendu</option>
-                <option value="Distribué" {{ (isset($produit) && $produit->statut == 'Distribué') ? 'selected' : '' }}>Distribué</option>
-            </select>
-        </div>
-
-        <button type="submit" class="btn w-100" style="color: white; background-color: var(--primary-color);">
-            {{ isset($produit) ? 'Modifier' : 'Ajouter' }}
-        </button>
-
-    </form>
-</div>
-
-
-
-</div>
-
-</div>
-
-
-        <script>
-            const sidebar = document.getElementById("sidebar");
-            const content = document.getElementById("content");
-            const collapseToggle = document.getElementById("collapseToggle");
-
-            collapseToggle.addEventListener("click", () => {
-                sidebar.classList.toggle("collapsed");
-                content.classList.toggle("collapsed");
-            });
-        </script>
-
-<script>
-            window.addEventListener("load", function () {
-                const loadingScreen = document.getElementById("loading-screen");
-                const mainContent = document.getElementById("main-content");
-
-                setTimeout(() => {
-                    loadingScreen.style.display = "none";
-                    mainContent.style.display = "block";
-                }, 2000);
-            });
-
-            function showSuccessModal() {
-                const modal = document.getElementById('successModal');
-                if (modal) {
-                    modal.style.display = 'block';
-                }
-            }
-
-            function closeSuccessModal() {
-                const modal = document.getElementById('successModal');
-                if (modal) {
-                    modal.style.display = 'none';
-                }
-            }
-
-            // Fermer le modal si on clique en dehors
-            window.addEventListener('click', function(event) {
-                const modal = document.getElementById('successModal');
-                if (event.target === modal) {
-                    closeSuccessModal();
-                }
-            });
-        </script>
-
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    </body>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
 </html>

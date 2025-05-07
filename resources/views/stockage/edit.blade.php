@@ -2,11 +2,8 @@
 
 @section('content')
 <div class="container">
-    <h2>Modifier le stock du produit : {{ $stock->produit->nom }}</h2>
-
-    <form method="POST" action="{{ route('stockage.update', $stock) }}">
-        @csrf
-        @method('PUT')
+    <h2>Modifier le stock du produit : {{ $stock->produit->nom ?? 'Produit non défini' }}</h2>    <form method="POST" action="{{ $stock->id ? route('stockage.update', $stock->id) : '#' }}">
+         @method('PUT')
 
         <div class="mb-3">
             <label>Quantité stockée</label>

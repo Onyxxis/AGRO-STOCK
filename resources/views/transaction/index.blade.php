@@ -701,8 +701,16 @@
                         </td>
                         <td>{{ date('d/m/Y', strtotime($transaction->date_transaction)) }}</td>
                         <td>{{ $transaction->quantite }}</td>
-                        <td>{{ $transaction->type_transaction == 'Vente' ? number_format($transaction->prix_unitaire, 0, ',', ' ') . ' FCFA' : '-' }}</td>
-                        <td>{{ $transaction->type_transaction == 'Vente' ? number_format($transaction->prix_unitaire * $transaction->quantite, 0, ',', ' ') . ' FCFA' : '-' }}</td>
+                        <td>
+                            {{ $transaction->prix_unitaire !== null
+                                ? number_format($transaction->prix_unitaire, 0, ',', ' ') . ' FCFA'
+                                : '0 FCFA' }}
+                        </td>
+                        <td>
+                            {{ number_format($transaction->quantite * ($transaction->prix_unitaire ?? 0), 0, ',', ' ') }} FCFA
+                        </td>
+                        {{-- <td>{{ $transaction->type_transaction == 'Vente' ? number_format($transaction->prix_unitaire, 0, ',', ' ') . ' FCFA' : '-' }}</td>
+                        <td>{{ $transaction->type_transaction == 'Vente' ? number_format($transaction->prix_unitaire * $transaction->quantite, 0, ',', ' ') . ' FCFA' : '-' }}</td> --}}
                         <td>{{ $transaction->destinataire }}</td>
                         <td>
                             <div class="action-buttons">
@@ -867,69 +875,60 @@
             }, 2000);
         });
 
-        // Setup edit modal
         document.addEventListener('DOMContentLoaded', function() {
-            const editModal = document.getElementById('editModal');
-            if (editModal) {
-                editModal.addEventListener('show.bs.modal', function(event) {
-                    const button = event.relatedTarget;
-                    const id = button.getAttribute('data-id');
-                    const produitId = button.getAttribute('data-produit');
-                    const type = button.getAttribute('data-type');
-                    const quantite = button.getAttribute('data-quantite');
-                    const prix = button.getAttribute('data-prix');
-                    const date = button.getAttribute('data-date');
-                    const destinataire = button.getAttribute('data-destinataire');
+    const editModal = document.getElementById('editModal');
 
-                    // Set form action
-                    const form = document.getElementById('editForm');
-                    form.action = `/transactions/${id}`;
+    if (editModal) {
+        editModal.addEventListener('show.bs.modal', function(event) {
+            const button = event.relatedTarget;
+            const id = button.getAttribute('data-id');
+            const produitId = button.getAttribute('data-produit');
+            const type = button.getAttribute('data-type');
+            const quantite = button.getAttribute('data-quantite');
+            const prix = button.getAttribute('data-prix');
+            const date = button.getAttribute('data-date');
+            const destinataire = button.getAttribute('data-destinataire');
 
-                    // Fill form fields
-                    const produitSelect = document.getElementById('edit_produit_id');
-                    for (let i = 0; i < produitSelect.options.length; i++) {
-                        if (produitSelect.options[i].value == produitId) {
-                            produitSelect.selectedIndex = i;
-                            break;
-                        }
-                    }
+            // Mise à jour de l'action du formulaire
+            const form = document.getElementById('editForm');
+            form.action = `/transaction/${id}`;
 
-                    document.getElementById('edit_type_transaction').value = type;
-                    document.getElementById('edit_quantite').value = quantite;
-                    document.getElementById('edit_prix_unitaire').value = prix || 0;
-                    document.getElementById('edit_date_transaction').value = date;
-                    document.getElementById('edit_destinataire').value = destinataire;
-
-                    // Toggle prix_unitaire field visibility
-                    const prixField = document.getElementById('edit_prix_unitaire');
-                    const prixContainer = prixField.closest('.col-md-6');
-
-                    if (type === 'Distribution') {
-                        prixContainer.style.display = 'none';
-                        prixField.value = '0';
-                        prixField.required = false;
-                    } else {
-                        prixContainer.style.display = 'block';
-                        prixField.required = true;
-                    }
-                });
-
-                // Add event listener for type change
-                document.getElementById('edit_type_transaction').addEventListener('change', function() {
-                    const prixField = document.getElementById('edit_prix_unitaire');
-                    const prixContainer = prixField.closest('.col-md-6');
-
-                    if (this.value === 'Distribution') {
-                        prixContainer.style.display = 'none';
-                        prixField.value = '0';
-                        prixField.required = false;
-                    } else {
-                        prixContainer.style.display = 'block';
-                        prixField.required = true;
-                    }
-                });
+            // Remplir les champs du formulaire
+            const produitSelect = document.getElementById('edit_produit_id');
+            for (let i = 0; i < produitSelect.options.length; i++) {
+                if (produitSelect.options[i].value == produitId) {
+                    produitSelect.selectedIndex = i;
+                    break;
+                }
             }
+
+            document.getElementById('edit_type_transaction').value = type;
+            document.getElementById('edit_quantite').value = quantite;
+            document.getElementById('edit_prix_unitaire').value = prix || 0;
+            document.getElementById('edit_date_transaction').value = date;
+            document.getElementById('edit_destinataire').value = destinataire;
+
+           // Pas besoin de cacher ou afficher le champ prix_unitaire en fonction du type
+           const prixField = document.getElementById('edit_prix_unitaire');
+            const prixContainer = prixField.closest('.col-md-6');
+            prixContainer.style.display = 'block'; // Toujours visible
+
+            // Le champ prix_unitaire est toujours requis maintenant
+            prixField.required = true;
+
         });
+
+            // Ajouter un écouteur d'événement pour le changement du type de transaction (si nécessaire)
+        document.getElementById('edit_type_transaction').addEventListener('change', function() {
+            const prixField = document.getElementById('edit_prix_unitaire');
+            const prixContainer = prixField.closest('.col-md-6');
+            prixContainer.style.display = 'block'; // Toujours visible
+            prixField.required = true; // Toujours requis
+
+        });
+    }
+});
+
 
         // Setup delete modal
         document.addEventListener('DOMContentLoaded', function() {
