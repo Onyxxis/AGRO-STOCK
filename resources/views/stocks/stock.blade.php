@@ -448,6 +448,10 @@
         </div>
 
         <div class="content" id="content">
+            <div class="welcome-section">
+                <h2>Page de stock</h2>
+                <p>Gérez efficacement votre stock de produits agricoles</p>
+            </div>
             <!-- Optionnel : formulaire de recherche (ex: par lieu ou produit) -->
             <div class="filter-container">
                 <form method="GET" action="{{ route('stocks.search') }}" class="filter-form">
