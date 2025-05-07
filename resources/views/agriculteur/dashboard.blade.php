@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Dashboard</title>
+    <title>Dashboard Produits</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
     <style>
@@ -256,63 +256,6 @@
             }
         }
 
-        .stats-container {
-            display: flex;
-            justify-content: space-between;
-            gap: 20px;
-            margin-top: 30px;
-        }
-
-        .stat-card {
-            background-color: #fff;
-            border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            padding: 20px;
-            flex: 1;
-            text-align: center;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
-
-        .stat-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
-        }
-
-        .stat-icon {
-            font-size: 2.5em;
-            color: #fff;
-            background-color: #2c3e50;
-            width: 60px;
-            height: 60px;
-            line-height: 60px;
-            border-radius: 50%;
-            margin: 0 auto 15px;
-        }
-
-        .stat-info h3 {
-            font-size: 1.2em;
-            color: #333;
-            margin-bottom: 10px;
-        }
-
-        .stat-value {
-            font-size: 1.5em;
-            font-weight: bold;
-            color: #2c3e50;
-        }
-
-        #produits-card .stat-icon {
-            background-color: #3498db;
-        }
-
-        #commandes-card .stat-icon {
-            background-color: #e67e22;
-        }
-
-        #ca-card .stat-icon {
-            background-color: #27ae60;
-        }
-
         #loading-screen {
             position: fixed;
             top: 0;
@@ -381,32 +324,9 @@
         </div>
         <ul>
             <li>
-                <a href="{{ route('dashboard') }}">
-                    <i class="fas fa-home"></i>
-                    <span>Accueil</span>
-                </a>
-            </li>
-            <li>
                 <a href="/produit">
                     <i class="fas fa-box"></i>
                     <span>Produits</span>
-                </a>
-            </li>
-            <li>
-                <a href="/stockage">
-                    <i class="fas fa-warehouse"></i>
-                    <span>Stock</span>
-                </a>
-            </li>
-            <li>
-                <a href="/transaction">
-                    <i class="fas fa-shopping-cart"></i>
-                    <span>Commandes</span>
-                </a>
-            </li>
-                <a href="/statistique">
-                    <i class="fas fa-chart-bar"></i>
-                    <span>Rapports</span>
                 </a>
             </li>
         </ul>
@@ -417,37 +337,8 @@
 
     <div class="content" id="content">
         <div class="welcome-section">
-            <h2>Bienvenue sur le Dashboard</h2>
-            <p>Gérez efficacement votre stock de produits agricoles</p>
-        </div>
-        <div class="stats-container">
-            <div class="stat-card" id="produits-card">
-                <div class="stat-icon">
-                    <i class="fas fa-box"></i>
-                </div>
-                <div class="stat-info">
-                    <h3>Produits</h3>
-                    <p class="stat-value">{{ $produitCount ?? 'N/A' }}</p>
-                </div>
-            </div>
-            <div class="stat-card" id="commandes-card">
-                <div class="stat-icon">
-                    <i class="fas fa-shopping-cart"></i>
-                </div>
-                <div class="stat-info">
-                    <h3>Commandes</h3>
-                    <p class="stat-value">40</p>
-                </div>
-            </div>
-            <div class="stat-card" id="ca-card">
-                <div class="stat-icon">
-                    <i class="fas fa-chart-line"></i>
-                </div>
-                <div class="stat-info">
-                    <h3>Chiffre d'affaires</h3>
-                    <p class="stat-value">1 579 450 FCFA</p>
-                </div>
-            </div>
+            <h2>Gestion des Produits</h2>
+            <p>Gérez efficacement votre catalogue de produits</p>
         </div>
     </div>
 

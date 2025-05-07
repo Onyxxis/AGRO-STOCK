@@ -633,6 +633,7 @@
     }
     </style>
 </head>
+
 <body>
     <div id="loading-screen">
         <video id="loading-video" autoplay loop muted>
@@ -641,29 +642,41 @@
     </div>
 
     <nav class="top-navbar">
-    <div class="search-bar">
-        <form action="{{ route('produits.search') }}" method="GET">
-            <i class="fas fa-search"></i>
-            <input type="text" name="search" placeholder="Rechercher..." class="form-control" value="{{ request('search') }}" />
-        </form>
-    </div>
+        <div class="search-bar">
+            <form action="{{ route('produits.search') }}" method="GET">
+                <i class="fas fa-search"></i>
+                <input type="text" name="search" placeholder="Rechercher..." class="form-control" value="{{ request('search') }}" />
+            </form>
+        </div>
 
         <div class="user-info">
-            <span>John Doe</span>
+            <span>{{ Auth::user()->name }}</span>
             <div class="dropdown">
                 <div class="avatar" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
                     <i class="fas fa-user"></i>
                 </div>
                 <ul class="dropdown-menu">
                     <li>
-                        <a class="dropdown-item" href="#"><i class="fas fa-user-cog me-2"></i>Profil</a>
+                        <a class="dropdown-item" href="{{ route('profile.edit') }}">
+                            <i class="fas fa-user-cog me-2"></i>Profil
+                        </a>
                     </li>
-                    <li>
-                        <a class="dropdown-item" href="#"><i class="fas fa-cog me-2"></i>Paramètres</a>
-                    </li>
+                    @unless(auth()->user()->role === 'agriculteur')
+                        <li>
+                            <a class="dropdown-item" href="#">
+                                <i class="fas fa-cog me-2"></i>Paramètres
+                            </a>
+                        </li>
+                    @endunless
                     <li><hr class="dropdown-divider" /></li>
                     <li>
-                        <a class="dropdown-item" href="#"><i class="fas fa-sign-out-alt me-2"></i>Déconnexion</a>
+                        <form method="POST" action="{{ route('logout') }}">
+                            @csrf
+                            <a class="dropdown-item" href="{{ route('logout') }}"
+                               onclick="event.preventDefault(); this.closest('form').submit();">
+                                <i class="fas fa-sign-out-alt me-2"></i>Déconnexion
+                            </a>
+                        </form>
                     </li>
                 </ul>
             </div>
@@ -679,36 +692,42 @@
             <hr />
         </div>
         <ul>
-            <li>
-                <a href="/dashboard">
-                    <i class="fas fa-home"></i>
-                    <span>Accueil</span>
-                </a>
-            </li>
+            @unless(auth()->user()->role === 'agriculteur')
+                <li>
+                    <a href="/dashboard">
+                        <i class="fas fa-home"></i>
+                        <span>Accueil</span>
+                    </a>
+                </li>
+            @endunless
+
             <li>
                 <a href="/produit">
                     <i class="fas fa-box"></i>
                     <span>Produits</span>
                 </a>
             </li>
-            <li>
-                <a href="/stockage">
-                    <i class="fas fa-warehouse"></i>
-                    <span>Stock</span>
-                </a>
-            </li>
-            <li>
-                <a href="/transaction">
-                    <i class="fas fa-shopping-cart"></i>
-                    <span>Commandes</span>
-                </a>
-            </li>
-            <li>
-                <a href="/statistique">
-                    <i class="fas fa-chart-bar"></i>
-                    <span>Rapports</span>
-                </a>
-            </li>
+
+            @unless(auth()->user()->role === 'agriculteur')
+                <li>
+                    <a href="/stockage">
+                        <i class="fas fa-warehouse"></i>
+                        <span>Stock</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="/transaction">
+                        <i class="fas fa-shopping-cart"></i>
+                        <span>Commandes</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="/statistique">
+                        <i class="fas fa-chart-bar"></i>
+                        <span>Rapports</span>
+                    </a>
+                </li>
+            @endunless
         </ul>
         <div class="collapse-toggle" id="collapseToggle">
             <i class="fas fa-chevron-left"></i>
@@ -716,6 +735,8 @@
     </div>
 
     <div class="content" id="content">
+
+
         <div class="filter-container">
             <form method="GET" action="{{ route('produits.filter') }}" class="filter-form">
                 <div class="filter-row">
@@ -767,7 +788,6 @@
             </form>
         </div>
 
-
         <div class="table-responsive">
             <table class="product-table">
                 <thead>
@@ -793,7 +813,7 @@
                                 <button class="edit-btn" onclick="window.location.href='{{ route('produits.edit', $produit->id) }}'">
                                     <i class="fas fa-pen"></i>
                                 </button>
-                                <button class="delete-btn" onclick="clearForm()">
+                                <button class="delete-btn" onclick="confirmDelete('{{ route('produits.destroy', $produit->id) }}')">
                                     <i class="fas fa-trash"></i>
                                 </button>
                             </div>
@@ -804,32 +824,28 @@
             </table>
         </div>
 
-        <!-- Bouton flottant pour ajouter un produit -->
-        <a href="/produit/create" class="floating-add-btn">
-            <i class="fas fa-plus"></i>
-        </a>
+            <!-- Bouton flottant pour ajouter un produit -->
+            <a href="/produit/create" class="floating-add-btn">
+                <i class="fas fa-plus"></i>
+            </a>
 
         <!-- Modal de confirmation -->
-        <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title">Confirmation</h5>
-                        <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                    <div class="modal-body">
-                        Voulez-vous vraiment supprimer ce produit ?
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
-                        <form id="deleteForm" method="POST" action="">
-                            @csrf
-                            @method('DELETE')
-                            <button type="submit" class="btn btn-danger">Supprimer</button>
-                        </form>
-                    </div>
+        <div class="modal-overlay" id="deleteModal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Confirmation</h5>
+                    <button type="button" class="close-btn" onclick="closeModal()">&times;</button>
+                </div>
+                <div class="modal-body">
+                    Voulez-vous vraiment supprimer ce produit ?
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" onclick="closeModal()">Annuler</button>
+                    <form id="deleteForm" method="POST" action="">
+                        @csrf
+                        @method('DELETE')
+                        <button type="submit" class="btn btn-danger">Supprimer</button>
+                    </form>
                 </div>
             </div>
         </div>
@@ -844,33 +860,28 @@
             sidebar.classList.toggle("collapsed");
             content.classList.toggle("collapsed");
         });
-    </script>
 
-    <script>
         window.addEventListener("load", function () {
             const loadingScreen = document.getElementById("loading-screen");
-            const mainContent = document.getElementById("main-content");
-
             setTimeout(() => {
                 loadingScreen.style.display = "none";
-                mainContent.style.display = "block";
             }, 2000);
         });
 
-
-        function clearForm() {
-            // Nettoyer l'ID du produit dans l'élément de formulaire
-            let form = document.getElementById('deleteForm');
-            form.action = ""; // Réinitialise l'URL d'action (optionnel si nécessaire)
-
-            // Si tu veux, tu peux également réinitialiser d'autres champs
-            // form.reset(); // Cette ligne réinitialise tous les champs du formulaire (s'il y en a)
-            console.log("Formulaire réinitialisé !");
-
-            // Si tu veux également fermer le modal après nettoyage
-            $('#deleteModal').modal('hide');
+        function confirmDelete(url) {
+            const form = document.getElementById('deleteForm');
+            form.action = url;
+            document.getElementById('deleteModal').classList.add('active');
         }
 
+        function closeModal() {
+            document.getElementById('deleteModal').classList.remove('active');
+        }
+
+        function clearForm() {
+            document.getElementById('deleteForm').action = "";
+            closeModal();
+        }
     </script>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>

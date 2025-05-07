@@ -1,14 +1,16 @@
+
 <?php
 use App\Http\Controllers\ProduitController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\StatistiqueController;
+use App\Http\Controllers\TransactionController;
 use App\Models\Produit;
 use Illuminate\Http\Request;
+use App\Http\Controllers\StockController;
+
 
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
-
-
 
 Route::get('/', function () {
     return view('auth.login');
@@ -22,67 +24,76 @@ Route::get('/signup', function () {
     return view('auth.signup');
 });
 
-Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
-
-
-
-Route::get('/produit', [ProduitController::class, 'index'])->name('produits.index');  // Afficher la liste des produits
-Route::get('/produit/create', [ProduitController::class, 'create'])->name('produits.create');  // Créer un produit
-Route::post('/produit', [ProduitController::class, 'store'])->name('produits.store');  // Enregistrer un produit
-Route::put('/produit/{produit}', [ProduitController::class, 'update'])->name('produits.update');  // Mettre à jour un produit
-// Route::get('/produit/{produit}', [ProduitController::class, 'show'])->name('produits.show');  // Voir un produit spécifique
-Route::get('/produit/{produit}/edit', [ProduitController::class, 'edit'])->name('produits.edit');
-Route::delete('/produit/{produit}', [ProduitController::class, 'destroy'])->name('produits.destroy');  // Supprimer un produit
-Route::get('/produit/filter', [ProduitController::class, 'filter'])->name('produits.filter');
-Route::get('/produit/search', [ProduitController::class, 'search'])->name('produits.search');
-
-// Routes pour la gestion des stocks
-Route::resource('stocks', StockController::class);
-Route::get('/rapports/stocks', [StockController::class, 'rapport'])->name('stocks.rapport');
-
-Route::get('/stock', [StockController::class, 'index'])->name('stocks.index');  // Afficher la liste des stocks
-Route::get('/stock/create', [StockController::class, 'create'])->name('stocks.create');  // Créer un stock
-Route::post('/stock', [StockController::class, 'store'])->name('stocks.store');  // Enregistrer un stock
-Route::put('/stock/{stock}', [StockController::class, 'update'])->name('stocks.update');  // Mettre à jour un stock
-
-Route::get('/stock/{stock}/edit', [StockController::class, 'edit'])->name('stocks.edit');
-Route::delete('/stock/{stock}', [StockController::class, 'destroy'])->name('stocks.destroy');  // Supprimer un stock
-Route::get('/stock/filter', [StockController::class, 'filter'])->name('stocks.filter');
-Route::get('/stock/search', [StockController::class, 'search'])->name('stocks.search');
-
-
-
-// Route::get('/stockage', function () {
-//     return view('stockage.stock');
-// });
-
-
-    
-
-
-
-Route::get('/statistique', function () {
-    return view('statistique.stat');
-});
-
-Route::get('/transaction', function () {
-    return view('transaction.commande');
-});
-
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
-
+// le dashboard de l'admin
 Route::middleware('auth')->group(function () {
+    Route::get('/dashboard', function () {
+        return view('dashboard');
+    })->name('dashboard');
+});
+
+// le dashboard de l'agriculteur
+Route::middleware(['auth'])->group(function () {
+    Route::get('/agriculteur/dashboard', function () {
+        return view('agriculteur.dashboard'); // Vue à créer
+    })->name('agriculteur.dashboard');
+});
+
+//les routes accessibles aux utilisateurs authentifiés (admin et agriculteur)
+Route::middleware(['auth'])->group(function () {
+    //profil
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
+    //produits
+    Route::get('/produit', [ProduitController::class, 'index'])->name('produits.index');  // Afficher la liste des produits
+    Route::get('/produit/create', [ProduitController::class, 'create'])->name('produits.create');  // Créer un produit
+    Route::post('/produit', [ProduitController::class, 'store'])->name('produits.store');  // Enregistrer un produit
+    Route::put('/produit/{produit}', [ProduitController::class, 'update'])->name('produits.update');  // Mettre à jour un produit
+    // Route::get('/produit/{produit}', [ProduitController::class, 'show'])->name('produits.show');  // Voir un produit spécifique
+    Route::get('/produit/{produit}/edit', [ProduitController::class, 'edit'])->name('produits.edit');
+    Route::delete('/produit/{produit}', [ProduitController::class, 'destroy'])->name('produits.destroy');  // Supprimer un produit
+    Route::get('/produit/filter', [ProduitController::class, 'filter'])->name('produits.filter');
+    Route::get('/produit/search', [ProduitController::class, 'search'])->name('produits.search');
 
-    // Route::middleware(['auth', 'role:admin'])->group(function () {
-    //     Route::get('/admin', function () {
-    //         return "Bienvenue sur le tableau de bord admin";
-    //     });
+});
+
+// Routes accessibles uniquement aux agriculteurs
+    Route::middleware(['auth', 'role:agriculteur'])->group(function () {
+});
+
+
+// Routes accessibles uniquement a l'admin
+
+Route::middleware(['auth', 'role:admin'])->group(function () {
+
+    // Routes pour la gestion des stocks
+Route::resource('stockage', StockController::class);
+Route::get('/rapports/stocks', [StockController::class, 'rapport'])->name('stockage.rapport');
+
+Route::get('/stockage', [StockController::class, 'index'])->name('stockage.index');  // Afficher la liste des stocks
+Route::get('/stockage/create', [StockController::class, 'create'])->name('stockage.create');  // Créer un stock
+Route::post('/stockage', [StockController::class, 'store'])->name('stockage.store');  // Enregistrer un stock
+Route::put('/stockage/{stock}', [StockController::class, 'update'])->name('stockage.update');  // Mettre à jour un stock
+
+Route::get('/stockage/{stock}/edit', [StockController::class, 'edit'])->name('stockage.edit');
+Route::delete('/stockage/{stock}', [StockController::class, 'destroy'])->name('stockage.destroy');  // Supprimer un stock
+Route::get('/stockage/filter', [StockController::class, 'filter'])->name('stockage.filter');
+Route::get('/stockage/search', [StockController::class, 'search'])->name('stockage.search');
+
+
+    // Transactions
+    Route::resource('transaction', TransactionController::class)->except(['show']);
+    Route::get('/transaction/filter', [TransactionController::class, 'filter'])->name('transaction.filter');
+    Route::get('/transaction/search', [TransactionController::class, 'search'])->name('transaction.search');
+
+
+  // Statistiques
+    Route::get('/statistique', [TransactionController::class, 'dashboard'])->middleware('auth')->name('statistiques.dash');
+
+    // Rapport
+    Route::get('/transaction/report', [TransactionController::class, 'generateReport'])->name('transaction.report');
+
 
 });
 

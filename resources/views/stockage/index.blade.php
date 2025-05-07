@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Dashboard</title>
+    <title>Dashboard - Stock</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
     <style>
@@ -237,80 +237,148 @@
             margin-bottom: 0;
         }
 
-        @media (max-width: 768px) {
-            .sidebar {
-                width: var(--sidebar-collapsed-width);
-                transform: translateX(-100%);
-            }
-
-            .sidebar.collapsed {
-                transform: translateX(0);
-            }
-
-            .content {
-                margin-left: 0;
-            }
-
-            .content.collapsed {
-                margin-left: var(--sidebar-collapsed-width);
-            }
+        /* Styles pour le tableau des stocks */
+        .transaction-table {
+            width: 100%;
+            border-collapse: collapse;
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
         }
 
-        .stats-container {
-            display: flex;
-            justify-content: space-between;
-            gap: 20px;
-            margin-top: 30px;
+        .transaction-table th,
+        .transaction-table td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid #e2e8f0;
         }
 
-        .stat-card {
-            background-color: #fff;
-            border-radius: 10px;
+        .transaction-table th {
+            background-color: var(--primary-color);
+            color: white;
+            font-weight: 600;
+        }
+
+        .transaction-table tbody tr:hover {
+            background-color: #e2f3e8;
+            transform: scale(1.02);
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            padding: 20px;
-            flex: 1;
-            text-align: center;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            transition: background-color 0.3s ease, transform 0.2s ease;
         }
 
-        .stat-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+        .transaction-table tbody tr:last-child td {
+            border-bottom: none;
         }
 
-        .stat-icon {
-            font-size: 2.5em;
-            color: #fff;
-            background-color: #2c3e50;
+        .transaction-table tbody tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 8px;
+        }
+
+        .action-buttons button {
+            padding: 0.5rem;
+            border: none;
+            border-radius: 8px;
+            color: white;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .edit-btn {
+            background-color: #3490dc;
+        }
+
+        .delete-btn {
+            background-color: #e3342f;
+        }
+
+        .edit-btn:hover {
+            background-color: #2779bd;
+        }
+
+        .delete-btn:hover {
+            background-color: #cc1f1a;
+        }
+
+        /* Bouton flottant pour ajouter */
+        .floating-add-btn {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
             width: 60px;
             height: 60px;
-            line-height: 60px;
+            background-color: var(--primary-color);
+            color: white;
             border-radius: 50%;
-            margin: 0 auto 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            z-index: 100;
         }
 
-        .stat-info h3 {
-            font-size: 1.2em;
-            color: #333;
-            margin-bottom: 10px;
+        .floating-add-btn:hover {
+            background-color: var(--secondary-color);
+            transform: scale(1.1);
         }
 
-        .stat-value {
-            font-size: 1.5em;
-            font-weight: bold;
-            color: #2c3e50;
+        /* Modal styles */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
         }
 
-        #produits-card .stat-icon {
-            background-color: #3498db;
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
         }
 
-        #commandes-card .stat-icon {
-            background-color: #e67e22;
+        .modal-content {
+            background-color: white;
+            padding: 2rem;
+            border-radius: 12px;
+            width: 100%;
+            max-width: 500px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
         }
 
-        #ca-card .stat-icon {
-            background-color: #27ae60;
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .modal-title {
+            font-size: 1.5rem;
+            color: #2d3748;
+            font-weight: 600;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #718096;
         }
 
         #loading-screen {
@@ -330,6 +398,29 @@
             width: 200px;
             height: 200px;
         }
+
+        #main-content {
+            display: none;
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                width: var(--sidebar-collapsed-width);
+                transform: translateX(-100%);
+            }
+
+            .sidebar.collapsed {
+                transform: translateX(0);
+            }
+
+            .content {
+                margin-left: 0;
+            }
+
+            .content.collapsed {
+                margin-left: var(--sidebar-collapsed-width);
+            }
+        }
     </style>
 </head>
 <body>
@@ -341,8 +432,10 @@
 
     <nav class="top-navbar">
         <div class="search-bar">
-            <i class="fas fa-search"></i>
-            <input type="text" placeholder="Rechercher..." class="form-control" />
+            <form action="{{ route('stockage.search') }}" method="GET">
+                <i class="fas fa-search"></i>
+                <input type="text" name="search" placeholder="Rechercher..." class="form-control" value="{{ request('search') }}" />
+            </form>
         </div>
         <div class="user-info">
             <span>{{ Auth::user()->name }}</span>
@@ -352,20 +445,14 @@
                 </div>
                 <ul class="dropdown-menu">
                     <li>
-                        <a class="dropdown-item" href="{{ route('profile.edit') }}">
-                            <i class="fas fa-user-cog me-2"></i>Profil
-                        </a>
+                        <a class="dropdown-item" href="#"><i class="fas fa-user-cog me-2"></i>Profil</a>
                     </li>
-
+                    <li>
+                        <a class="dropdown-item" href="#"><i class="fas fa-cog me-2"></i>Paramètres</a>
+                    </li>
                     <li><hr class="dropdown-divider" /></li>
                     <li>
-                        <form method="POST" action="{{ route('logout') }}">
-                            @csrf
-                            <a class="dropdown-item" href="{{ route('logout') }}"
-                               onclick="event.preventDefault(); this.closest('form').submit();">
-                                <i class="fas fa-sign-out-alt me-2"></i>Déconnexion
-                            </a>
-                        </form>
+                        <a class="dropdown-item" href="#"><i class="fas fa-sign-out-alt me-2"></i>Déconnexion</a>
                     </li>
                 </ul>
             </div>
@@ -377,11 +464,12 @@
             <h4>
                 <i class="fas fa-leaf"></i>
                 <span>Agro Stock</span>
-            </h4><hr>
+            </h4>
+            <hr />
         </div>
         <ul>
             <li>
-                <a href="{{ route('dashboard') }}">
+                <a href="/dashboard">
                     <i class="fas fa-home"></i>
                     <span>Accueil</span>
                 </a>
@@ -404,6 +492,7 @@
                     <span>Commandes</span>
                 </a>
             </li>
+            <li>
                 <a href="/statistique">
                     <i class="fas fa-chart-bar"></i>
                     <span>Rapports</span>
@@ -417,41 +506,63 @@
 
     <div class="content" id="content">
         <div class="welcome-section">
-            <h2>Bienvenue sur le Dashboard</h2>
-            <p>Gérez efficacement votre stock de produits agricoles</p>
+            <h2>Gestion des stocks</h2>
+            <p>Consultez et gérez l'état de votre stock</p>
         </div>
-        <div class="stats-container">
-            <div class="stat-card" id="produits-card">
-                <div class="stat-icon">
-                    <i class="fas fa-box"></i>
-                </div>
-                <div class="stat-info">
-                    <h3>Produits</h3>
-                    <p class="stat-value">{{ $produitCount ?? 'N/A' }}</p>
-                </div>
+
+        @if(session('success'))
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                {{ session('success') }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
-            <div class="stat-card" id="commandes-card">
-                <div class="stat-icon">
-                    <i class="fas fa-shopping-cart"></i>
-                </div>
-                <div class="stat-info">
-                    <h3>Commandes</h3>
-                    <p class="stat-value">40</p>
-                </div>
-            </div>
-            <div class="stat-card" id="ca-card">
-                <div class="stat-icon">
-                    <i class="fas fa-chart-line"></i>
-                </div>
-                <div class="stat-info">
-                    <h3>Chiffre d'affaires</h3>
-                    <p class="stat-value">1 579 450 FCFA</p>
-                </div>
-            </div>
+        @endif
+
+        <div class="table-responsive">
+            <table class="transaction-table">
+                <thead>
+                    <tr>
+                        <th>Produit</th>
+                        <th>Quantité stockée (kg)</th>
+                        <th>Lieu de stockage</th>
+                        <th>Date de mise à jour</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach($stocks ?? [] as $stock)
+                    <tr>
+                        <td>{{ $stock->produit->nom }}</td>
+                        <td>{{ $stock->quantite_stockee }}</td>
+                        <td>{{ $stock->lieu_stockage }}</td>
+                        <td>{{ date('d/m/Y', strtotime($stock->updated_at)) }}</td>
+                        <td>
+                            <div class="action-buttons">
+                                <a href="{{ route('stockage.edit', $stock) }}" class="edit-btn">
+                                    <i class="fas fa-pen"></i>
+                                </a>
+                                <form action="{{ route('stockage.destroy', $stock) }}" method="POST" style="display:inline;">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="delete-btn" onclick="return confirm('Confirmer la suppression ?')">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                    @endforeach
+                </tbody>
+            </table>
         </div>
+
+        <!-- Bouton flottant pour ajouter un stock -->
+        <a href="{{ route('stockage.create') }}" class="floating-add-btn">
+            <i class="fas fa-plus"></i>
+        </a>
     </div>
 
     <script>
+        // Toggle sidebar
         const sidebar = document.getElementById("sidebar");
         const content = document.getElementById("content");
         const collapseToggle = document.getElementById("collapseToggle");
@@ -461,13 +572,18 @@
             content.classList.toggle("collapsed");
         });
 
+        // Loading screen
         window.addEventListener("load", function () {
             const loadingScreen = document.getElementById("loading-screen");
+            const mainContent = document.getElementById("main-content");
+
             setTimeout(() => {
                 loadingScreen.style.display = "none";
+                mainContent.style.display = "block";
             }, 2000);
         });
     </script>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

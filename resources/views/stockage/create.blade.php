@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Dashboard</title>
+    <title>Dashboard - Ajouter un stock</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
     <style>
@@ -158,83 +158,104 @@
             margin-left: var(--sidebar-collapsed-width);
         }
 
-        .search-bar {
-            position: relative;
-            max-width: 300px;
-        }
-
-        .search-bar i {
-            position: absolute;
-            left: 12px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: #718096;
-        }
-
-        .search-bar input {
-            padding-left: 40px;
-            border-radius: 20px;
-            border: 1px solid #e2e8f0;
-            background-color: #f7fafc;
-        }
-
-        .user-info {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
-
-        .user-info .avatar {
-            width: 40px;
-            height: 40px;
-            background-color: var(--primary-color);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            cursor: pointer;
-        }
-
-        .user-info span {
-            color: #2d3748;
-            font-weight: 500;
-        }
-
-        .dropdown-menu {
-            border: none;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            border-radius: 8px;
-            min-width: 120px;
-        }
-
-        .dropdown-item {
-            padding: 8px 16px;
-            color: #2d3748;
-        }
-
-        .dropdown-item:hover {
-            background-color: #f7fafc;
-            color: var(--primary-color);
-        }
-
-        .welcome-section {
+        /* Styles pour le formulaire */
+        .form-container {
             background-color: white;
             border-radius: 12px;
             padding: 2rem;
-            margin-bottom: 2rem;
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            max-width: 600px;
+            margin: 0 auto;
         }
 
-        .welcome-section h2 {
+        .form-title {
             color: #2d3748;
             font-weight: 600;
-            margin-bottom: 1rem;
+            margin-bottom: 1.5rem;
+            text-align: center;
         }
 
-        .welcome-section p {
-            color: #718096;
-            margin-bottom: 0;
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            display: block;
+            font-weight: 500;
+            color: #2d3748;
+            margin-bottom: 0.5rem;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            background-color: #f7fafc;
+            font-size: 1rem;
+            color: #2d3748;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-control:focus {
+            border-color: var(--primary-color);
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(56, 161, 105, 0.2);
+        }
+
+        .text-danger {
+            color: #e53e3e;
+            font-size: 0.875rem;
+            margin-top: 0.25rem;
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--secondary-color);
+        }
+
+        .btn-secondary {
+            background-color: #718096;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background-color: #4a5568;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin-top: 2rem;
+        }
+
+        #loading-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(255, 255, 255, 0.9);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        #loading-video {
+            width: 200px;
+            height: 200px;
         }
 
         @media (max-width: 768px) {
@@ -255,81 +276,6 @@
                 margin-left: var(--sidebar-collapsed-width);
             }
         }
-
-        .stats-container {
-            display: flex;
-            justify-content: space-between;
-            gap: 20px;
-            margin-top: 30px;
-        }
-
-        .stat-card {
-            background-color: #fff;
-            border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            padding: 20px;
-            flex: 1;
-            text-align: center;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
-
-        .stat-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
-        }
-
-        .stat-icon {
-            font-size: 2.5em;
-            color: #fff;
-            background-color: #2c3e50;
-            width: 60px;
-            height: 60px;
-            line-height: 60px;
-            border-radius: 50%;
-            margin: 0 auto 15px;
-        }
-
-        .stat-info h3 {
-            font-size: 1.2em;
-            color: #333;
-            margin-bottom: 10px;
-        }
-
-        .stat-value {
-            font-size: 1.5em;
-            font-weight: bold;
-            color: #2c3e50;
-        }
-
-        #produits-card .stat-icon {
-            background-color: #3498db;
-        }
-
-        #commandes-card .stat-icon {
-            background-color: #e67e22;
-        }
-
-        #ca-card .stat-icon {
-            background-color: #27ae60;
-        }
-
-        #loading-screen {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(255, 255, 255, 0.9);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
-        }
-
-        #loading-video {
-            width: 200px;
-            height: 200px;
-        }
     </style>
 </head>
 <body>
@@ -342,7 +288,7 @@
     <nav class="top-navbar">
         <div class="search-bar">
             <i class="fas fa-search"></i>
-            <input type="text" placeholder="Rechercher..." class="form-control" />
+            <input type="text" placeholder="Rechercher..." class="form-control" disabled />
         </div>
         <div class="user-info">
             <span>{{ Auth::user()->name }}</span>
@@ -356,7 +302,13 @@
                             <i class="fas fa-user-cog me-2"></i>Profil
                         </a>
                     </li>
-
+                    @unless(auth()->user()->role === 'agriculteur')
+                        <li>
+                            <a class="dropdown-item" href="#">
+                                <i class="fas fa-cog me-2"></i>Paramètres
+                            </a>
+                        </li>
+                    @endunless
                     <li><hr class="dropdown-divider" /></li>
                     <li>
                         <form method="POST" action="{{ route('logout') }}">
@@ -377,38 +329,46 @@
             <h4>
                 <i class="fas fa-leaf"></i>
                 <span>Agro Stock</span>
-            </h4><hr>
+            </h4>
+            <hr />
         </div>
         <ul>
-            <li>
-                <a href="{{ route('dashboard') }}">
-                    <i class="fas fa-home"></i>
-                    <span>Accueil</span>
-                </a>
-            </li>
+            @unless(auth()->user()->role === 'agriculteur')
+                <li>
+                    <a href="/dashboard">
+                        <i class="fas fa-home"></i>
+                        <span>Accueil</span>
+                    </a>
+                </li>
+            @endunless
+
             <li>
                 <a href="/produit">
                     <i class="fas fa-box"></i>
                     <span>Produits</span>
-                </a>
+                    </a>
             </li>
-            <li>
-                <a href="/stockage">
-                    <i class="fas fa-warehouse"></i>
-                    <span>Stock</span>
-                </a>
-            </li>
-            <li>
-                <a href="/transaction">
-                    <i class="fas fa-shopping-cart"></i>
-                    <span>Commandes</span>
-                </a>
-            </li>
-                <a href="/statistique">
-                    <i class="fas fa-chart-bar"></i>
-                    <span>Rapports</span>
-                </a>
-            </li>
+
+            @unless(auth()->user()->role === 'agriculteur')
+                <li>
+                    <a href="/stockage">
+                        <i class="fas fa-warehouse"></i>
+                        <span>Stock</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="/transaction">
+                        <i class="fas fa-shopping-cart"></i>
+                        <span>Commandes</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="/statistique">
+                        <i class="fas fa-chart-bar"></i>
+                        <span>Rapports</span>
+                    </a>
+                </li>
+            @endunless
         </ul>
         <div class="collapse-toggle" id="collapseToggle">
             <i class="fas fa-chevron-left"></i>
@@ -416,42 +376,59 @@
     </div>
 
     <div class="content" id="content">
-        <div class="welcome-section">
-            <h2>Bienvenue sur le Dashboard</h2>
-            <p>Gérez efficacement votre stock de produits agricoles</p>
-        </div>
-        <div class="stats-container">
-            <div class="stat-card" id="produits-card">
-                <div class="stat-icon">
-                    <i class="fas fa-box"></i>
+        <div class="form-container">
+            <h2 class="form-title">Ajouter un stock</h2>
+
+            <form method="POST" action="{{ route('stockage.store') }}">
+                @csrf
+
+                <div class="form-group">
+                    <label for="produit_id" class="form-label">Produit</label>
+                    <select name="produit_id" class="form-control" required>
+                        <option value="">-- Sélectionner un produit --</option>
+                        @foreach($produits as $produit)
+                            <option value="{{ $produit->id }}" {{ old('produit_id') == $produit->id ? 'selected' : '' }}>
+                                {{ $produit->nom }}
+                            </option>
+                        @endforeach
+                    </select>
+                    @error('produit_id')
+                        <div class="text-danger">{{ $message }}</div>
+                    @enderror
                 </div>
-                <div class="stat-info">
-                    <h3>Produits</h3>
-                    <p class="stat-value">{{ $produitCount ?? 'N/A' }}</p>
+
+                <div class="form-group">
+                    <label for="quantite_stockee" class="form-label">Quantité stockée (kg)</label>
+                    <input type="number" name="quantite_stockee" class="form-control"
+                           value="{{ old('quantite_stockee') }}" required min="0" step="0.01">
+                    @error('quantite_stockee')
+                        <div class="text-danger">{{ $message }}</div>
+                    @enderror
                 </div>
-            </div>
-            <div class="stat-card" id="commandes-card">
-                <div class="stat-icon">
-                    <i class="fas fa-shopping-cart"></i>
+
+                <div class="form-group">
+                    <label for="lieu_stockage" class="form-label">Lieu de stockage</label>
+                    <input type="text" name="lieu_stockage" class="form-control"
+                           value="{{ old('lieu_stockage') }}" required>
+                    @error('lieu_stockage')
+                        <div class="text-danger">{{ $message }}</div>
+                    @enderror
                 </div>
-                <div class="stat-info">
-                    <h3>Commandes</h3>
-                    <p class="stat-value">40</p>
+
+                <div class="action-buttons">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save me-2"></i> Enregistrer
+                    </button>
+                    <a href="{{ route('stockage.index') }}" class="btn btn-secondary">
+                        <i class="fas fa-times me-2"></i> Annuler
+                    </a>
                 </div>
-            </div>
-            <div class="stat-card" id="ca-card">
-                <div class="stat-icon">
-                    <i class="fas fa-chart-line"></i>
-                </div>
-                <div class="stat-info">
-                    <h3>Chiffre d'affaires</h3>
-                    <p class="stat-value">1 579 450 FCFA</p>
-                </div>
-            </div>
+            </form>
         </div>
     </div>
 
     <script>
+        // Toggle sidebar
         const sidebar = document.getElementById("sidebar");
         const content = document.getElementById("content");
         const collapseToggle = document.getElementById("collapseToggle");
@@ -461,6 +438,7 @@
             content.classList.toggle("collapsed");
         });
 
+        // Loading screen
         window.addEventListener("load", function () {
             const loadingScreen = document.getElementById("loading-screen");
             setTimeout(() => {
@@ -468,6 +446,7 @@
             }, 2000);
         });
     </script>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
