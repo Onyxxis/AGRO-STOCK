@@ -32,13 +32,13 @@
             }
 
             a {
-                text-decoration: none;
-                color: inherit;
+                text-decoration: none; /* Enlève le soulignement */
+                color: inherit; /* Hérite la couleur du texte parent */
             }
 
             a:hover,
             a:focus {
-                color: inherit;
+                color: inherit; /* Empêche le changement de couleur en bleu */
             }
 
             .top-navbar {
@@ -262,70 +262,71 @@
                 }
             }
 
-            /* Conteneur du formulaire */
-.form-container {
-    background-color: white;
-    border-radius: 12px;
-    padding: 2rem;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-    max-width: 600px;
-    margin: 0 auto;
-}
 
-/* Groupe de formulaire */
-.form-group {
-    margin-bottom: 1.5rem;
-}
-
-.form-group label {
-    display: block;
-    font-weight: 500;
-    color: #2d3748;
-    margin-bottom: 0.5rem;
-}
-
-.form-group input,
-.form-group select {
-    width: 100%;
-    padding: 0.75rem;
-    border: 1px solid #e2e8f0;
-    border-radius: 8px;
-    background-color: #f7fafc;
-    font-size: 1rem;
-    color: #2d3748;
-    transition: border-color 0.3s ease;
-}
-
-.form-group input:focus,
-.form-group select:focus {
-    border-color: var(--primary-color);
-    outline: none;
-}
-
-/* Bouton de soumission */
-.submit-btn {
-    background-color: var(--primary-color);
-    color: white;
-    padding: 0.75rem 1.5rem;
-    border: none;
-    border-radius: 8px;
-    font-size: 1rem;
-    font-weight: 500;
-    cursor: pointer;
+        /* Conteneur des cartes */
+.stats-container {
     display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 10px;
-    transition: background-color 0.3s ease;
+    justify-content: space-between;
+    gap: 20px;
+    margin-top: 30px;
 }
 
-.submit-btn:hover {
-    background-color: var(--secondary-color);
+/* Style de base des cartes */
+.stat-card {
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    flex: 1;
+    text-align: center;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
-.submit-btn i {
-    font-size: 1.2rem;
+/* Effet au survol */
+.stat-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
 }
+
+/* Icône */
+.stat-icon {
+    font-size: 2.5em;
+    color: #fff;
+    background-color: #2c3e50;
+    width: 60px;
+    height: 60px;
+    line-height: 60px;
+    border-radius: 50%;
+    margin: 0 auto 15px;
+}
+
+/* Titre de la carte */
+.stat-info h3 {
+    font-size: 1.2em;
+    color: #333;
+    margin-bottom: 10px;
+}
+
+/* Valeur de la carte */
+.stat-value {
+    font-size: 1.5em;
+    font-weight: bold;
+    color: #2c3e50;
+}
+
+/* Couleurs personnalisées pour chaque carte */
+#produits-card .stat-icon {
+    background-color: #3498db; /* Bleu */
+}
+
+#commandes-card .stat-icon {
+    background-color: #e67e22; /* Orange */
+}
+
+#ca-card .stat-icon {
+    background-color: #27ae60; /* Vert */
+}
+
 
 #loading-screen {
                 position: fixed;
@@ -348,79 +349,17 @@
             #main-content {
                 display: none;
             }
-
-            /* Style du Modal */
-.success-modal {
-    display: none;
-    position: fixed;
-    z-index: 1050;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.5);
-}
-
-.modal-content {
-    background-color: white;
-    margin: 15% auto;
-    padding: 30px;
-    border-radius: 12px;
-    width: 400px;
-    max-width: 90%;
-    text-align: center;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-    animation: modalFadeIn 0.3s;
-}
-
-@keyframes modalFadeIn {
-    from {opacity: 0; transform: translateY(-20px);}
-    to {opacity: 1; transform: translateY(0);}
-}
-
-.success-icon {
-    font-size: 60px;
-    color: #38a169;
-    margin-bottom: 20px;
-}
-
-.modal-title {
-    font-size: 24px;
-    font-weight: 600;
-    margin-bottom: 15px;
-    color: #2d3748;
-}
-
-.modal-message {
-    font-size: 16px;
-    color: #4a5568;
-    margin-bottom: 25px;
-}
-
-.modal-close-btn {
-    background-color: #38a169;
-    color: white;
-    border: none;
-    padding: 10px 20px;
-    border-radius: 8px;
-    font-size: 16px;
-    cursor: pointer;
-    transition: background-color 0.3s;
-}
-
-.modal-close-btn:hover {
-    background-color: #2f855a;
-}
-
-
         </style>
     </head>
     <body>
-    <div id="loading-screen">
+
+        <div id="loading-screen">
             <video id="loading-video" autoplay loop muted>
                 <source src="{{ asset('loading.mp4') }}" type="video/mp4" />
             </video>
         </div>
+
+
         <nav class="top-navbar">
             <div class="search-bar">
                 <i class="fas fa-search"></i>
@@ -473,7 +412,7 @@
             </div>
             <ul>
                 <li>
-                    <a href="/dashboard">
+                    <a href="">
                         <i class="fas fa-home"></i>
                         <span>Accueil</span>
                     </a>
@@ -509,76 +448,108 @@
         </div>
 
         <div class="content" id="content">
-            <div class="container">
-                <h2>{{ isset($stock) ? 'Modifier' : 'Ajouter' }} un stock</h2>
-        
-                @if ($errors->any())
-                    <div class="alert alert-danger">
-                        <ul>
-                            @foreach ($errors->all() as $error)
-                                <li>{{ $error }}</li>
-                            @endforeach
-                        </ul>
+            <div class="welcome-section">
+                <h2>Page de stock</h2>
+                <p>Gérez efficacement votre stock de produits agricoles</p>
+            </div>
+            <!-- Optionnel : formulaire de recherche (ex: par lieu ou produit) -->
+            <div class="filter-container">
+                <form method="GET" action="{{ route('stockage.search') }}" class="filter-form">
+                    <div class="filter-row">
+                        <div class="filter-item">
+                            <label for="search" class="filter-label">Rechercher</label>
+                            <input type="text" name="search" id="search" placeholder="Nom produit ou lieu..." class="filter-date">
+                        </div>
+                        <div class="filter-item">
+                            <button type="submit" class="filter-button">
+                                <i class="fas fa-search"></i> Rechercher
+                            </button>
+                        </div>
                     </div>
-                @endif
-        
-                <form action="{{ isset($stock) ? route('stocks.update', $stock->id) : route('stocks.store') }}" method="POST">
-                    @csrf
-                    @if(isset($stock))
-                        @method('PUT')
-                    @endif
-        
-                    {{-- Sélection du produit lié au stock --}}
-                    <div class="mb-3">
-                        <label for="produit_id" class="form-label">Produit associé :</label>
-                        <select name="produit_id" id="produit_id" class="form-control" required>
-                            <option value="">-- Sélectionner un produit --</option>
-                            @foreach($produits as $produit)
-                                <option value="{{ $produit->id }}" {{ old('produit_id', $stock->produit_id ?? '') == $produit->id ? 'selected' : '' }}>
-                                    {{ $produit->nom }} - {{ ucfirst($produit->type) }}
-                                </option>
-                            @endforeach
-                        </select>
-                    </div>
-        
-                    {{-- Quantité stockée --}}
-                    <div class="mb-3">
-                        <label for="quantite_stockee" class="form-label">Quantité stockée (en kg) :</label>
-                        <input type="number" class="form-control" name="quantite_stockee" id="quantite_stockee"
-                            value="{{ old('quantite_stockee', $stock->quantite_stockee ?? '') }}" min="1" required>
-                    </div>
-        
-                    {{-- Date d'entrée en stock --}}
-                    <div class="mb-3">
-                        <label for="date_entree" class="form-label">Date d’entrée en stock :</label>
-                        <input type="date" class="form-control" name="date_entree" id="date_entree"
-                            value="{{ old('date_entree', isset($stock) ? $stock->date_entree : date('Y-m-d')) }}" required>
-                    </div>
-        
-                    {{-- Statut du stock --}}
-                    <div class="mb-3">
-                        <label for="statut" class="form-label">Statut :</label>
-                        <select class="form-control" name="statut" id="statut" required>
-                            <option value="stocké" {{ old('statut', $stock->statut ?? '') === 'stocké' ? 'selected' : '' }}>Stocké</option>
-                            <option value="vendu" {{ old('statut', $stock->statut ?? '') === 'vendu' ? 'selected' : '' }}>Vendu</option>
-                            <option value="distribué" {{ old('statut', $stock->statut ?? '') === 'distribué' ? 'selected' : '' }}>Distribué</option>
-                        </select>
-                    </div>
-        
-                    {{-- Bouton de soumission --}}
-                    <button type="submit" class="btn w-100" style="background-color: var(--primary-color); color: white;">
-                        {{ isset($stock) ? 'Modifier le stock' : 'Ajouter au stock' }}
-                    </button>
                 </form>
             </div>
+
+            <!-- Tableau des stocks -->
+            <div class="table-responsive">
+                <table class="product-table">
+                    <thead>
+                        <tr>
+                            <th>Nom du produit</th>
+                            <th>Type</th>
+                            <th>Quantité stockée (kg)</th>
+                            <th>Lieu de stockage</th>
+                            <th>Date d'enregistrement</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="product-table-body">
+                        @foreach($stocks as $stock)
+                        <tr>
+                            <td>{{ $stock->produit->nom }}</td>
+                            <td>{{ $stock->produit->type }}</td>
+                            <td>{{ $stock->quantite_stockee }}</td>
+                            <td>{{ $stock->lieu_stockage }}</td>
+                            <td>{{ $stock->created_at->format('d/m/Y') }}</td>
+                            <td>
+                                <div class="action-buttons">
+                                    <button class="edit-btn" onclick="window.location.href='{{ route('stockage.edit', $stock->id) }}'">
+                                        <i class="fas fa-pen"></i>
+                                    </button>
+                                    <button class="delete-btn" data-bs-toggle="modal" data-bs-target="#deleteModal" data-url="{{ route('stockage.destroy', $stock->id) }}">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Bouton flottant d’ajout -->
+            <a href="{{ route('stockage.create') }}" class="floating-add-btn">
+                <i class="fas fa-plus"></i>
+            </a>
+
+            <!-- Modal de suppression -->
+            <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Confirmation</h5>
+                            <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            Voulez-vous vraiment supprimer ce stock ?
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                            <form id="deleteForm" method="POST" action="">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="btn btn-danger">Supprimer</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
-        <div id="successModal" class="success-modal">
-            <div class="modal-content">
-                <i class="fas fa-check-circle success-icon"></i>
-                <h2 class="modal-title">Succès</h2>
-                <p class="modal-message">Le stock a été ajouté avec succès !</p>
-                <button class="modal-close-btn" onclick="closeSuccessModal()">Fermer</button>
-            </div>        
+
+        <!-- Script pour injecter l’URL dynamique dans le formulaire de suppression -->
+        <script>
+            const deleteButtons = document.querySelectorAll('.delete-btn');
+            const deleteForm = document.getElementById('deleteForm');
+
+            deleteButtons.forEach(btn => {
+                btn.addEventListener('click', function () {
+                    const url = this.getAttribute('data-url');
+                    deleteForm.setAttribute('action', url);
+                });
+            });
+        </script>
+
 
 
         <script>
@@ -601,28 +572,6 @@
                     loadingScreen.style.display = "none";
                     mainContent.style.display = "block";
                 }, 2000);
-            });
-
-            function showSuccessModal() {
-                const modal = document.getElementById('successModal');
-                if (modal) {
-                    modal.style.display = 'block';
-                }
-            }
-
-            function closeSuccessModal() {
-                const modal = document.getElementById('successModal');
-                if (modal) {
-                    modal.style.display = 'none';
-                }
-            }
-
-            // Fermer le modal si on clique en dehors
-            window.addEventListener('click', function(event) {
-                const modal = document.getElementById('successModal');
-                if (event.target === modal) {
-                    closeSuccessModal();
-                }
             });
         </script>
 
