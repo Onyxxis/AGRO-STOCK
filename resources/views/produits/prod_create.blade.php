@@ -440,13 +440,6 @@
                             <i class="fas fa-user-cog me-2"></i>Profil
                         </a>
                     </li>
-                    @unless(auth()->user()->role === 'agriculteur')
-                        <li>
-                            <a class="dropdown-item" href="#">
-                                <i class="fas fa-cog me-2"></i>Paramètres
-                            </a>
-                        </li>
-                    @endunless
                     <li><hr class="dropdown-divider" /></li>
                     <li>
                         <form method="POST" action="{{ route('logout') }}">

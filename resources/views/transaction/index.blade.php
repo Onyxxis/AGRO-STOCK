@@ -560,9 +560,6 @@
                     <li>
                         <a class="dropdown-item" href="#"><i class="fas fa-user-cog me-2"></i>Profil</a>
                     </li>
-                    <li>
-                        <a class="dropdown-item" href="#"><i class="fas fa-cog me-2"></i>Paramètres</a>
-                    </li>
                     <li><hr class="dropdown-divider" /></li>
                     <li>
                         <a class="dropdown-item" href="#"><i class="fas fa-sign-out-alt me-2"></i>Déconnexion</a>

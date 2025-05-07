@@ -32,11 +32,12 @@ Route::middleware('auth')->group(function () {
 });
 
 // le dashboard de l'agriculteur
-Route::middleware(['auth'])->group(function () {
-    Route::get('/agriculteur/dashboard', function () {
-        return view('agriculteur.dashboard'); // Vue à créer
-    })->name('agriculteur.dashboard');
-});
+// Route::middleware(['auth'])->group(function () {
+//     Route::get('/agriculteur/dashboard', function () {
+//         return view('agriculteur.dashboard'); // Vue à créer
+//     })->name('agriculteur.dashboard');
+// });
+
 
 //les routes accessibles aux utilisateurs authentifiés (admin et agriculteur)
 Route::middleware(['auth'])->group(function () {
@@ -58,9 +59,12 @@ Route::middleware(['auth'])->group(function () {
 
 });
 
+
+
 // Routes accessibles uniquement aux agriculteurs
     Route::middleware(['auth', 'role:agriculteur'])->group(function () {
 });
+
 
 
 // Routes accessibles uniquement a l'admin

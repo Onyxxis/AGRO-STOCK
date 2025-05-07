@@ -43,7 +43,6 @@
             padding: 40px;
             border-radius: 10px;
             box-shadow: 0 0 10px rgba(0, 255, 0, 0.3);
-            /* box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); */
             text-align: center;
             width: 100%;
             max-width: 400px;
@@ -101,6 +100,21 @@
         }
         .btn-login:hover {
             background-color: #39863DFF;
+        }
+        .register-link {
+            margin-top: 15px;
+            font-size: 0.9rem;
+         }
+        .register-link a {
+             color: #4CAF50;
+             text-decoration: none;
+        }
+        .register-link a:hover {
+              text-decoration: underline;
+        }
+        .social-login a {
+            color: #4CAF50;
+            text-decoration: none;
         }
         .social-login {
             margin-top: 20px;
@@ -189,11 +203,9 @@
                 </div>
 
                 <!-- Remember Me -->
-                <div class="form-group">
-                    <label>
-                        <input type="checkbox" name="remember">
-                        <span>Se souvenir de moi</span>
-                    </label>
+                <div class="form-group remember-me" style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+                    <label for="remember" style="margin: 0; cursor: pointer;">Se souvenir de moi</label>
+                    <input type="checkbox" name="remember" id="remember" style="margin: 0; width: auto;">
                 </div>
 
                 <button type="submit" class="btn-login">Se connecter</button>
@@ -206,10 +218,12 @@
             </form>
 
             <hr>
-
             <div class="social-login">
-                <button type="button">Se connecter avec Google</button>
-                <button type="button">Autre méthode</button>
+                Pas encore de compte? <a href="{{ route('register') }}">S'inscrire</a>
+            </div>
+            <div class="social-login">
+                {{-- <button type="button">Se connecter avec Google</button>
+                <button type="button">Autre méthode</button> --}}
             </div>
         </div>
     </div>

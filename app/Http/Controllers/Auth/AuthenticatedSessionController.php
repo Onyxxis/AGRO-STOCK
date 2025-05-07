@@ -34,7 +34,7 @@ class AuthenticatedSessionController extends Controller
 
     return match ($role) {
         'admin' => redirect()->route('dashboard'),  // Redirection vers le dashboard de l'admin
-        'agriculteur' => redirect()->route('agriculteur.dashboard'), // Redirection vers le dashboard de l'agriculteur
+        'agriculteur' => redirect()->route('produits.index'), // Redirection vers le dashboard de l'agriculteur
         // default => redirect()->route('home'),  // Redirection par défaut
     };    }
 

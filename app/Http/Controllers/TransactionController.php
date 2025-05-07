@@ -247,9 +247,50 @@ public function dashboard()
         $stockByProduct[$productName] += $stock->quantite_stockee;
     }
 
+     // Calcul des KPI
+     $totalVentes = Transaction::where('type_transaction', 'Vente')->sum('quantite');
+     $totalDistributions = Transaction::where('type_transaction', 'Distribution')->sum('quantite');
+     $chiffreAffaires = Transaction::where('type_transaction', 'Vente')
+         ->get()
+         ->sum(function($t) {
+             return $t->quantite * $t->prix_unitaire;
+         });
+     $totalStock = Stock::sum('quantite_stockee');
+
+     // Top produits
+     $topProduits = Produit::withCount([
+         'transactions as ventes' => function($query) {
+             $query->where('type_transaction', 'Vente');
+         },
+         'transactions as distributions' => function($query) {
+             $query->where('type_transaction', 'Distribution');
+         }
+     ])
+     ->withSum(['transactions as total_ventes' => function($query) {
+         $query->where('type_transaction', 'Vente');
+     }], 'quantite')
+     ->orderByDesc('total_ventes')
+     ->limit(5)
+     ->get();
+
+     return view('statistique.dash', [
+         'transactionsByMonth' => $transactionsByMonth,
+         'stockByProduct' => $stockByProduct,
+         'totalVentes' => $totalVentes,
+         'totalDistributions' => $totalDistributions,
+         'chiffreAffaires' => $chiffreAffaires,
+         'totalStock' => $totalStock,
+         'topProduits' => $topProduits
+     ]);
+
     return view('statistique.dash', [
         'transactionsByMonth' => $transactionsByMonth,
-        'stockByProduct' => $stockByProduct
+        'stockByProduct' => $stockByProduct,
+        'totalVentes' => $totalVentes,
+        'totalDistributions' => $totalDistributions,
+        'chiffreAffaires' => $chiffreAffaires,
+        'totalStock' => $totalStock,
+        'topProduits' => $topProduits
     ]);
 }
 

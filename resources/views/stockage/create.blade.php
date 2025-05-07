@@ -302,11 +302,6 @@
                             <i class="fas fa-user-cog me-2"></i>Profil
                         </a>
                     </li>
-                        <li>
-                            <a class="dropdown-item" href="#">
-                                <i class="fas fa-cog me-2"></i>Paramètres
-                            </a>
-                        </li>
                     <li><hr class="dropdown-divider" /></li>
                     <li>
                         <form method="POST" action="{{ route('logout') }}">
@@ -344,8 +339,6 @@
                     <span>Produits</span>
                     </a>
             </li>
-
-            @unless(auth()->user()->role === 'agriculteur')
                 <li>
                     <a href="/stockage">
                         <i class="fas fa-warehouse"></i>
@@ -381,7 +374,7 @@
                 <div class="form-group">
                     <label for="produit_id" class="form-label">Produit</label>
                     <select name="produit_id" class="form-control" required>
-                        <option value="">-- Sélectionner un produit --</option>
+                        <option value="">Sélectionner un produit</option>
                         @foreach($produits as $produit)
                             <option value="{{ $produit->id }}" {{ old('produit_id') == $produit->id ? 'selected' : '' }}>
                                 {{ $produit->nom }}
@@ -392,7 +385,7 @@
                         <div class="text-danger">{{ $message }}</div>
                     @enderror
                 </div>
-{{-- 
+{{--
                 <div class="form-group">
                     <label for="quantite_stockee" class="form-label">Quantité stockée (kg)</label>
                     <input type="number" name="quantite_stockee" class="form-control"

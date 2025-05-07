@@ -271,6 +271,71 @@
             height: 100% !important;
         }
 
+        /* Styles pour les KPI */
+        .kpi-card {
+            border-radius: 12px;
+            border: none;
+            transition: transform 0.3s ease;
+            height: 100%;
+            color: white;
+            padding: 1.5rem;
+        }
+
+        .kpi-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+
+        .kpi-card .card-title {
+            font-size: 1rem;
+            margin-bottom: 0.5rem;
+            opacity: 0.9;
+        }
+
+        .kpi-card .card-value {
+            font-size: 2rem;
+            font-weight: 600;
+            margin: 0.5rem 0;
+        }
+
+        .kpi-card .card-trend {
+            font-size: 0.9rem;
+            margin-bottom: 0;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        /* Styles pour le tableau */
+        .table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0 10px;
+        }
+
+        .table th {
+            background-color: #f8f9fa;
+            border: none;
+            padding: 12px 15px;
+            font-weight: 600;
+        }
+
+        .table td {
+            background-color: white;
+            padding: 12px 15px;
+            vertical-align: middle;
+            border: none;
+        }
+
+        .table tr {
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            border-radius: 8px;
+        }
+
+        .table tr:hover td {
+            background-color: #f8f9fa;
+        }
+
         #loading-screen {
             position: fixed;
             top: 0;
@@ -310,6 +375,10 @@
             .chart-container {
                 height: 300px;
             }
+
+            .kpi-card .card-value {
+                font-size: 1.5rem;
+            }
         }
     </style>
 </head>
@@ -333,14 +402,17 @@
                 </div>
                 <ul class="dropdown-menu">
                     <li>
-                        <a class="dropdown-item" href="#"><i class="fas fa-user-cog me-2"></i>Profil</a>
-                    </li>
-                    <li>
-                        <a class="dropdown-item" href="#"><i class="fas fa-cog me-2"></i>Paramètres</a>
+                        <a class="dropdown-item" href="{{ route('profile.edit') }}"><i class="fas fa-user-cog me-2"></i>Profil</a>
                     </li>
                     <li><hr class="dropdown-divider" /></li>
                     <li>
-                        <a class="dropdown-item" href="#"><i class="fas fa-sign-out-alt me-2"></i>Déconnexion</a>
+                        <form method="POST" action="{{ route('logout') }}">
+                            @csrf
+                            <a class="dropdown-item" href="{{ route('logout') }}"
+                               onclick="event.preventDefault(); this.closest('form').submit();">
+                                <i class="fas fa-sign-out-alt me-2"></i>Déconnexion
+                            </a>
+                        </form>
                     </li>
                 </ul>
             </div>
@@ -398,6 +470,58 @@
             <p>Visualisation des données clés de votre activité</p>
         </div>
 
+        <!-- Indicateurs clés (KPI) -->
+        <div class="row mb-4">
+            <div class="col-md-4 mb-3">
+                <div class="kpi-card bg-primary">
+                    <h5 class="card-title">Total Ventes</h5>
+                    <h2 class="card-value">{{ number_format($totalVentes) }} unités</h2>
+                </div>
+            </div>
+            <div class="col-md-4 mb-3">
+                <div class="kpi-card bg-success">
+                    <h5 class="card-title">Chiffre d'Affaires</h5>
+                    <h2 class="card-value">{{ number_format($chiffreAffaires, 0, ',', ' ') }} FCFA</h2>
+                </div>
+            </div>
+            <div class="col-md-4 mb-3">
+                <div class="kpi-card bg-info">
+                    <h5 class="card-title">Stock Total</h5>
+                    <h2 class="card-value">{{ number_format($totalStock) }} unités</h2>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tableau des produits les plus vendus -->
+        <div class="stats-card">
+            <div class="card-header">
+                <h3>Top 5 des Produits</h3>
+            </div>
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Produit</th>
+                            <th>Ventes</th>
+                            <th>Distributions</th>
+                            <th>Total</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach($topProduits as $produit)
+                        <tr>
+                            <td>{{ $produit->nom }}</td>
+                            <td>{{ $produit->ventes }}</td>
+                            <td>{{ $produit->distributions }}</td>
+                            <td>{{ $produit->ventes + $produit->distributions }}</td>
+                        </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Graphiques existants -->
         <div class="stats-card">
             <div class="card-header">
                 <h3>Évolution des Transactions par Mois</h3>
