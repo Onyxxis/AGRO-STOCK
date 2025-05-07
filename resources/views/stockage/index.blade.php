@@ -522,6 +522,8 @@
                 <thead>
                     <tr>
                         <th>Produit</th>
+                        <th>Type</th>
+                        <th>Quantité récoltée</th>
                         <th>Quantité stockée (kg)</th>
                         <th>Lieu de stockage</th>
                         <th>Date de mise à jour</th>
@@ -531,7 +533,9 @@
                 <tbody>
                     @foreach($stocks ?? [] as $stock)
                     <tr>
-                        <td>{{ $stock->produit->nom }}</td>
+                        <td>{{ $stock->produit->nom ?? 'Produit introuvable' }}</td>
+                        <td>{{ $stock->produit->type ?? '-' }}</td>
+                        <td>{{ $stock->produit->quantite_recoltee ?? '-' }}</td>
                         <td>{{ $stock->quantite_stockee }}</td>
                         <td>{{ $stock->lieu_stockage }}</td>
                         <td>{{ date('d/m/Y', strtotime($stock->updated_at)) }}</td>

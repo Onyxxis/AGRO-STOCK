@@ -14,25 +14,45 @@ class StockController extends Controller
     {
         $stocks = Stock::with('produit')->get();
         return view('stockage.index', compact('stocks'));
+
     }
 
     public function create()
     {
-        $produits = Produit::doesntHave('stock')->get(); // Pour éviter les doublons
+        // $produits = Produit::doesntHave('stock')->get(); // Pour éviter les doublons
+        $produits = Produit::all();
         return view('stockage.create', compact('produits'));
     }
 
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'produit_id' => 'required|exists:produits,id|unique:stocks,produit_id',
-            'quantite_stockee' => 'required|numeric|min:0',
+            'produit_id' => 'required|exists:produits,id',
             'lieu_stockage' => 'required|string|max:255',
         ]);
 
-        Stock::create($validated);
-        return redirect()->route('stockage.index')->with('success', 'Stock ajouté avec succès');
+        $produit = Produit::findOrFail($validated['produit_id']);
+
+        // Quantité à ajouter
+        $quantiteAjoutee = $produit->quantite_recoltee;
+
+        $stock = Stock::where('produit_id', $produit->id)->first();
+
+        if ($stock) {
+            $stock->quantite_stockee += $quantiteAjoutee;
+            $stock->lieu_stockage = $validated['lieu_stockage'];
+            $stock->save();
+        } else {
+            Stock::create([
+                'produit_id' => $produit->id,
+                'quantite_stockee' => $quantiteAjoutee,
+                'lieu_stockage' => $validated['lieu_stockage'],
+            ]);
+        }
+
+        return redirect()->route('stockage.index')->with('success', 'Stock mis à jour avec succès');
     }
+
 
     public function edit(Stock $stock)
     {

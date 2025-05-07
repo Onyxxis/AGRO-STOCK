@@ -41,21 +41,30 @@ class ProduitController extends Controller
     return redirect()->route('produits.index')->with('success', 'Produit ajouté avec succès.');
 }
 
+public function update(Request $request, Produit $produit)
+{
+    $request->validate([
+        'nom' => 'required|string|max:255',
+        'type' => 'required|string|max:255',
+        'quantite_recoltee' => 'required|numeric|min:0',
+        'date_recolte' => 'required|date',
+        'statut' => 'required|in:Stocké,Vendu,Distribué',
+    ]);
 
-    public function update(Request $request, Produit $produit)
-    {
-        $request->validate([
-            'nom' => 'required|string|max:255',
-            'type' => 'required|string|max:255',
-            'quantite_recoltee' => 'required|numeric|min:0',
-            'date_recolte' => 'required|date',
-            'statut' => 'required|in:Stocké,Vendu,Distribué',
-        ]);
+    // Mettre à jour le produit
+    $produit->update($request->all());
 
-        $produit->update($request->all());
+    // Mettre à jour le stock si le produit a déjà un stock
+    $stock = $produit->stock; // Grâce à la relation hasOne()
 
-        return redirect()->route('produits.index')->with('success', 'Produit mis à jour avec succès !');
+    if ($stock) {
+        $stock->quantite_stockee = $produit->quantite_recoltee;
+        $stock->save();
     }
+
+    return redirect()->route('produits.index')->with('success', 'Produit mis à jour avec succès !');
+}
+
 
     public function destroy(Produit $produit)
     {
