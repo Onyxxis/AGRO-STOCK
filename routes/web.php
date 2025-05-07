@@ -67,20 +67,9 @@ Route::middleware(['auth'])->group(function () {
 
 Route::middleware(['auth', 'role:admin'])->group(function () {
 
-    // Routes pour la gestion des stocks
-Route::resource('stockage', StockController::class);
-Route::get('/rapports/stocks', [StockController::class, 'rapport'])->name('stockage.rapport');
-
-Route::get('/stockage', [StockController::class, 'index'])->name('stockage.index');  // Afficher la liste des stocks
-Route::get('/stockage/create', [StockController::class, 'create'])->name('stockage.create');  // Créer un stock
-Route::post('/stockage', [StockController::class, 'store'])->name('stockage.store');  // Enregistrer un stock
-Route::put('/stockage/{stock}', [StockController::class, 'update'])->name('stockage.update');  // Mettre à jour un stock
-
-Route::get('/stockage/{stock}/edit', [StockController::class, 'edit'])->name('stockage.edit');
-Route::delete('/stockage/{stock}', [StockController::class, 'destroy'])->name('stockage.destroy');  // Supprimer un stock
-Route::get('/stockage/filter', [StockController::class, 'filter'])->name('stockage.filter');
-Route::get('/stockage/search', [StockController::class, 'search'])->name('stockage.search');
-
+    //stockage
+    Route::resource('stockage', StockController::class);
+    Route::get('/stockage/search', [StockController::class, 'search'])->name('stockage.search');
 
     // Transactions
     Route::resource('transaction', TransactionController::class)->except(['show']);
