@@ -357,7 +357,6 @@
                         <span>Rapports</span>
                     </a>
                 </li>
-            @endunless
         </ul>
         <div class="collapse-toggle" id="collapseToggle">
             <i class="fas fa-chevron-left"></i>

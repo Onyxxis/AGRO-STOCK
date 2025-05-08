@@ -40,7 +40,6 @@ class ProduitController extends Controller
 
     return redirect()->route('produits.index')->with('success', 'Produit ajouté avec succès.');
 }
-
 public function update(Request $request, Produit $produit)
 {
     $request->validate([
@@ -51,14 +50,27 @@ public function update(Request $request, Produit $produit)
         'statut' => 'required|in:Stocké,Vendu,Distribué',
     ]);
 
-    // Mettre à jour le produit
+    // Sauvegarder l'ancienne quantité récoltée
+    $ancienneQuantite = $produit->quantite_recoltee;
+
+    // Mettre à jour le produit avec les nouvelles données
     $produit->update($request->all());
 
     // Mettre à jour le stock si le produit a déjà un stock
-    $stock = $produit->stock; // Grâce à la relation hasOne()
+    $stock = $produit->stock;
 
     if ($stock) {
-        $stock->quantite_stockee = $produit->quantite_recoltee;
+        // Calcul de la différence entre la nouvelle et l'ancienne quantité récoltée
+        $difference = $produit->quantite_recoltee - $ancienneQuantite;
+
+        // Mise à jour de la quantité stockée
+        $stock->quantite_stockee += $difference;
+
+        // S'assurer que la quantité stockée ne devient pas négative
+        if ($stock->quantite_stockee < 0) {
+            $stock->quantite_stockee = 0;
+        }
+
         $stock->save();
     }
 
