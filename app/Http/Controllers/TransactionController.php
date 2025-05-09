@@ -292,6 +292,14 @@ public function dashboard()
         'totalStock' => $totalStock,
         'topProduits' => $topProduits
     ]);
+
+    return view('dashboard', [
+        'totalVentes' => $totalVentes,
+        'totalDistributions' => $totalDistributions,
+        'chiffreAffaires' => $chiffreAffaires,
+        'totalStock' => $totalStock,
+        'topProduits' => $topProduits
+    ]);
 }
 
 }
